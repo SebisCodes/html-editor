@@ -1,0 +1,19 @@
+## Operating systems and editors
+.DS_Store
+Thumbs.db
+desktop.ini
+*~
+*.swp
+*.swo
+.idea/
+.vscode/
+
+## Python (the tests)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+## Test output and downloads
+tests/output/
+*.log

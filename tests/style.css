@@ -1,0 +1,3 @@
+/* A stylesheet of a test document: its picture is a file of the same document. */
+.cover { height: 120px; background: url("title-picture.jpg") center / cover; }
+h1 { color: rgb(200, 30, 30); }
