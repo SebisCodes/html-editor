@@ -9,7 +9,7 @@
  * quotes and brackets typed over a selection go around it.
  */
 
-import { parse } from './html.js?v=6';
+import { parse } from './html.js?v=7';
 import { VOID } from './html-tokens.js?v=3';
 import { state, ui } from './state.js?v=2';
 import { undo, redo } from './history.js?v=4';

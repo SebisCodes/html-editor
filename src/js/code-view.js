@@ -9,10 +9,11 @@
  */
 
 import { highlight } from './html-highlight.js?v=3';
+import { buildHighlightWithTemplateTags, convertTemplateTagsToBraces } from './template-tags.js?v=1';
 import { escapeHtml } from './html-tokens.js?v=3';
 import { state, ui, areas, NARROW_SCREEN, LINE_HEIGHT } from './state.js?v=2';
 import { updateHistoryButtons, addHistoryStep } from './history.js?v=4';
-import { startPreviewTimer, showCodeElement, RENDER_DELAY } from './preview.js?v=4';
+import { startPreviewTimer, showCodeElement, RENDER_DELAY, TEMPLATE_SYNTAX } from './preview.js?v=4';
 import { startSaveTimer } from './storage.js?v=4';
 
 /** Code longer than this is shown without highlighting. */
@@ -42,7 +43,7 @@ let characterWidth = 0;
  */
 export function renderCode() {
     const code = state.code;
-    ui.hl.innerHTML = code.length < MAX_HIGHLIGHT_LENGTH ? highlight(code) + '\n' : escapeHtml(code) + '\n';
+    ui.hl.innerHTML = code.length < MAX_HIGHLIGHT_LENGTH ? buildHighlightWithTemplateTags(highlight(convertTemplateTagsToBraces(code, TEMPLATE_SYNTAX)), TEMPLATE_SYNTAX, code) + '\n' : escapeHtml(code) + '\n';
     renderProblemMarks();
     const lines = code.split('\n').length;
     areas.lineWrap.update(code);

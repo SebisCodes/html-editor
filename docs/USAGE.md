@@ -34,6 +34,22 @@ your documents stay there unless you send them somewhere yourself.
 3. **Export**: save the page as HTML, as one file with its files inside, as a ZIP or as a
    PDF.
 
+## Side panel
+
+The side panel holds the document settings, Insert, Files and the Outline. The button at the top right of the work area opens it over the
+preview and closes it again (Escape too); it is closed when the editor opens. On a phone it is the
+view **Edit**.
+
+## Templates with placeholders
+
+A website that edits templates opens the editor with `?template=mustache` or `?template=angle`.
+The preview then shows the page filled with the website's examples; **Template** in the preview's
+bar shows the placeholders as written, **Examples** brings the examples back. A placeholder without
+an example shows its label in brackets. The **Placeholders** box below the code lists them: a click
+puts one at the cursor, a section around the selected text. Text that comes from an example cannot
+be edited in the preview. Saving, downloading and exporting the code keep the placeholders; print
+follows the view shown.
+
 ## Editing in the preview
 
 Click text in the preview to edit it right there. **Enter** starts a new paragraph (the

@@ -6,13 +6,13 @@
  * its own styles. The choice is remembered in this browser.
  */
 
-import { getRefPath } from './html.js?v=6';
+import { getRefPath } from './html.js?v=7';
 import { getDecodedText } from './html-tokens.js?v=3';
 import { getExtension, getDataUrlBytes, getDataUrlText } from './assets.js?v=6';
 import { state, showToast } from './state.js?v=2';
 import { renderPreview, PREVIEW_URL } from './preview.js?v=4';
-import { findFileForRef, getFileUses, getInlineCss } from './file-refs.js?v=3';
-import { createPreviewDocument } from './preview-document.js?v=3';
+import { createViewDocument, getTemplateDocument, getViewTitle } from './preview-views.js?v=1';
+import { findFileForRef, getFileUses, getInlineCss } from './file-refs.js?v=4';
 import { stopTextEdit } from './text-edit.js?v=4';
 
 /** Whether a PDF applies page breaks: "0" off, anything else on. */
@@ -122,13 +122,31 @@ function getZipPath(name) {
 
 /**
  * Returns the page as plain text: the preview's text, or the code without tags when there is
- * no preview.
+ * no preview; while the preview shows a template's example view, the text of the template as
+ * written.
  * @returns {string} the text, at most one empty line in a row, ending with a line break.
  */
 export function getPlainText() {
+    const templateBody = getTemplateDocument()?.body;
     const body = state.previewDocument?.body;
-    const text = body ? body.innerText : getDecodedText(state.code.replace(/<(script|style)\b[\s\S]*?<\/\1>/gi, '').replace(/<[^>]*>/g, ' '));
+    const text = templateBody ? getBlockText(templateBody) : body ? body.innerText : getDecodedText(state.code.replace(/<(script|style)\b[\s\S]*?<\/\1>/gi, '').replace(/<[^>]*>/g, ' '));
     return text.replace(/[ \t]+\n/g, '\n').replace(/\n{3,}/g, '\n\n').trim() + '\n';
+}
+
+/**
+ * Returns the text of a document's body that is in no frame: the line breaks of <br>, and of
+ * blocks, list items and table rows, on lines of their own, cells apart by tabs; scripts and
+ * styles left out.
+ * @param {HTMLElement} body - the body.
+ * @returns {string} the text.
+ */
+function getBlockText(body) {
+    const copy = body.cloneNode(true);
+    copy.querySelectorAll('script, style, template, noscript').forEach(element => element.remove());
+    copy.querySelectorAll('br').forEach(element => element.replaceWith('\n'));
+    copy.querySelectorAll('p, div, li, tr, h1, h2, h3, h4, h5, h6, pre, blockquote, section, article, header, footer, table, ul, ol, dl, dt, dd, address, figure, figcaption, hr').forEach(element => element.append('\n'));
+    copy.querySelectorAll('td, th').forEach(element => element.append('\t'));
+    return copy.textContent;
 }
 
 /**
@@ -156,7 +174,7 @@ export function runPrint() {
  */
 async function runPrintFromFrame(frame) {
     const frameDocument = frame.contentDocument;
-    frameDocument.replaceChild(frameDocument.importNode(createPreviewDocument(state.code, state.parsed).documentElement, true), frameDocument.documentElement);
+    frameDocument.replaceChild(frameDocument.importNode(createViewDocument(state.code, state.parsed).documentElement, true), frameDocument.documentElement);
     const rules = frameDocument.createElement('style');
     const breaksOn = isPageBreaksOn();
     rules.textContent = breaksOn ? PRINT_CSS : NO_BREAKS_CSS;
@@ -164,7 +182,7 @@ async function runPrintFromFrame(frame) {
     addPrintPageLayout(frameDocument);
     await Promise.race([Promise.all([...frameDocument.images].map(picture => (picture.complete ? null : new Promise(resolve => { picture.onload = picture.onerror = resolve; })))), new Promise(resolve => setTimeout(resolve, PICTURE_WAIT))]);
     const pageTitle = document.title;
-    document.title = state.name;
+    document.title = getViewTitle(state.name);
     try { frame.contentWindow.print(); } catch (e) { showToast('This browser does not allow printing here'); }
     document.title = pageTitle;
     setTimeout(() => frame.remove(), PRINT_FRAME_TIME);

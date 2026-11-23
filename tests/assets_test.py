@@ -96,9 +96,11 @@ with tempfile.TemporaryDirectory() as d:
                 return next((m for m in reversed(get_log()) if m['type'] == 'htmleditor:' + t), None)
 
             check_that(not frame.locator('#btn-save').is_visible(), '?save=0: no Save button')
+            frame.click('#btn-panel')
             frame.click('[data-itab=pictures]')
             check_that(frame.locator('#pics-wrap .picture-card').count() == 3 and 'PDF' in frame.inner_text('#pics-wrap') and 'used 1×' in frame.inner_text('#pics-wrap [data-name="plan.pdf"]'), 'a PDF file is kept and listed with where it is used')
             frame.click('[data-itab=properties]')
+            frame.click('#btn-panel')
 
             # Ctrl+S from the preview (not the code) still saves to the page
             frame.click('#stage', position={'x': 400, 'y': 600})
@@ -115,12 +117,14 @@ with tempfile.TemporaryDirectory() as d:
             ch = [m for m in get_log()[n:] if m['type'] == 'htmleditor:change']
             check_that(ch and 'title-picture-2.jpg' in ch[-1].get('assetsChanged', []), 'a new file is reported as a change')
             # Remove one
+            frame.click('#btn-panel')
             frame.click('[data-itab=pictures]')
             frame.click('[data-pic-del="alt.jpg"]')
             frame.click('#ask-ok')
             page.wait_for_timeout(700)
             ch = [m for m in get_log()[n:] if m['type'] == 'htmleditor:change']
             check_that(ch and 'alt.jpg' in ch[-1].get('assetsRemoved', []), 'removing a file is a change too')
+            frame.click('#btn-panel')
             page.evaluate("send({ type: 'htmleditor:get' })")
             page.wait_for_timeout(300)
             g = get_last_message('save')

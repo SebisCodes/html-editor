@@ -58,6 +58,7 @@ editor hides the page text around it and shows a Save button.
 | `viewer=1` | The read-only viewer (see "Viewer"). Works alone or with `embed`, `theme`, `src` and a document in the hash. |
 | `theme=light`, `dark`, `auto` | Fixes the color theme for this page load and hides the theme switch. The visitor's own stored choice stays as it is. Other values are ignored. |
 | `tidy=1` | Every document your page hands over (by `load` or `src`) is tidied as part of the load, exactly as the editor's Tidy / Format does it. It does not count as an edit: no `change` message, `get` and `save` return the tidied code, and Undo does not go back before it. Code the editor cannot read is loaded as it is. |
+| `template=mustache`, `angle` | For templates whose placeholders your server fills in before the page is used: `{{name}}`, `{{#name}} … {{/name}}` and `{{^name}} … {{/name}}`, or with `angle` `<<name>>` and `<<?name>> … <</?name>>`. The preview shows the page filled with your examples (`htmleditor:template`, see "Template placeholders" below), or with the switch "Template" the tags as text; the code view shows the tags as written. The list of problems reports a section left open, a stray end tag, an end tag that closes an outer section while an inner one is open, and a tag with a sign outside the syntax. An id that holds a placeholder counts as filled later. It holds for every document of this page load. |
 | `src=<URL>` | Opens a file from an https address. Your server must allow CORS for `https://html.giit.ch`. |
 | `name=<name>` | The name of the document opened with `src`. |
 | `webhook=<URL>` | Sends the document to that address on Save (see "Webhook"). Only for this document and only while the page is open; it is never stored. At the top level the visitor is asked first; inside your page it works only together with `src`. |
@@ -110,6 +111,7 @@ Page to editor:
 | `htmleditor:save` |  | Presses Save. |
 | `htmleditor:ai` | `label?, prompt?, endpoint?, key?, base?, assets?, answer?, dialog?` or `clear: true`, or `decline: true, message?` | AI through your own server; `decline` answers `htmleditor:key-request`. |
 | `htmleditor:ai-click` | `request, handled` | The answer to `htmleditor:ai-click`: `handled: true` when your page shows its own AI dialog. |
+| `htmleditor:template` | `placeholders, assets?` or `clear: true` | With `?template=`: your placeholders with examples and example pictures (see "Template placeholders"). |
 
 Optional fields of `htmleditor:load`:
 
@@ -141,6 +143,56 @@ it the editor falls back to the old copy command or shows the prompt to copy by 
 link from an AI cannot reach an editor inside another website, so in a frame the editor asks
 the user to paste the AI's whole answer instead. Open the editor in its own window if links
 should work.
+
+## Template placeholders
+
+With `?template=mustache` (or `angle`) your page can send the placeholders of the page with
+examples, as the message `htmleditor:template` or as the field `template` of `htmleditor:load`:
+
+```js
+frame.contentWindow.postMessage({
+  type: 'htmleditor:template',
+  placeholders: [
+    { name: 'name', kind: 'value', label: 'Name', example: 'John Doe' },
+    { name: 'logo', kind: 'image', label: 'Logo', image: 'logo.png' },
+    { name: 'hasNote', kind: 'section', label: 'With a note', shown: true },
+    { name: 'items', kind: 'list', label: 'Items',
+      fields: [ { name: 'label', label: 'Item' }, { name: 'quantity', label: 'Quantity' } ],
+      rows: [ { label: 'Chair', quantity: '2' }, { label: 'Table', quantity: '1' } ] },
+  ],
+  assets: { 'logo.png': 'data:image/png;base64,...' },
+}, 'https://html.giit.ch');
+```
+
+| Field | Meaning | Limit |
+|---|---|---|
+| `name` | the tag's name: a letter or `_`, then letters, digits, `_`, `.`, `-` | 60 characters |
+| `kind` | `value` (the default), `image`, `section` (also for inverted sections), `list` | - |
+| `label`, `description` | what the "Placeholders" box shows | 80, 300 characters |
+| `example` | `value`: the example text | 2000 characters |
+| `image` | `image`: the name of an example picture in `assets` | - |
+| `shown` | `section`: example state, `true` or `false` | - |
+| `fields`, `rows` | `list`: the placeholders of one entry, and example entries (field name to text) | 50, 50 |
+| `assets` | example pictures: PNG, JPEG, GIF or WebP as base64 data addresses under plain names, still, at most 10000 pixels a side | 20 pictures, 40 MB |
+
+- The preview shows the example view by default: sections by their example state (an inverted
+  section the opposite), a list once per row, pictures from `assets`. A placeholder without an
+  example shows its label in brackets (`[Name]`); a section without `shown` is shown once (an
+  inverted one hidden); a list without `rows` shows one entry with the field labels.
+  A line that holds only section tags is left out with its line break. The switch "Template" in
+  the preview's bar shows the tags as text.
+- Each example is written for its place: text and attribute values get the characters of markup as entities, CSS only plain words, scripts, event attributes and the markup itself nothing. An address that holds a placeholder in
+  your template is never loaded, also when it is filled with an example; only an example picture
+  from `assets` or a file of the page is shown there.
+- Each message replaces the list before it; `{ type: 'htmleditor:template', clear: true }` (or
+  `template: null` in a load) ends it, a load without `template` keeps it. The list belongs to your
+  page: other documents of the user show the labels in brackets.
+- Every text is shown as text; longer texts are cut. Examples and pictures stay in memory only:
+  never stored, never part of the page, never sent anywhere.
+- The "Placeholders" box at the bottom of the code lists label, tag and example; a click puts the
+  tag at the cursor (a section around the selection) as one undo step. Without a list from your
+  page it lists the tags found in the page.
+- The code, the page as one file, the ZIP and the text are always the template as written; print follows the view shown and names it in its title.
 
 ## Webhook
 

@@ -4,18 +4,21 @@
  *
  * renderPreview() runs these steps:
  *   1. read the code (html.js) and list its problems with the files it misses;
- *   2. put the page (preview-document.js) into the frame, keeping the frame's scroll place, with
- *      the editor's own marks styled;
- *   3. draw the problems, the code, the Files tab, the outline and the document settings again,
- *      and frame the element at the code's cursor.
+ *   2. put the page (preview-document.js; with a template syntax the view chosen,
+ *      preview-views.js) into the frame, keeping the frame's scroll place, with the editor's own
+ *      marks styled;
+ *   3. draw the problems, the code, the Files tab, the outline, the document settings and the
+ *      template's controls again, and frame the element at the code's cursor.
  * While a text of the preview is edited in place, the preview is not drawn; it is drawn once
  * the edit ends.
  */
 
-import { parse } from './html.js?v=6';
+import { parse } from './html.js?v=7';
 import { state, ui, getElements } from './state.js?v=2';
-import { getMissingRefs } from './file-refs.js?v=3';
-import { createPreviewDocument } from './preview-document.js?v=3';
+import { getMissingRefs } from './file-refs.js?v=4';
+import { checkTemplateSections, convertTemplateTagsToBraces } from './template-tags.js?v=1';
+import { TEMPLATE_SYNTAX, createViewDocument } from './preview-views.js?v=1';
+import { renderTemplateControls } from './template-panel.js?v=1';
 import { connectPreviewDocument } from './preview-events.js?v=4';
 import { renderProblems } from './problems.js?v=4';
 import { renderCode } from './code-view.js?v=4';
@@ -32,6 +35,7 @@ const EDITOR_CSS = '[data-htmleditor-mark]{outline:2px solid rgba(26,115,232,.85
     + '[data-htmleditor-swap]{outline:3px solid #c2410c!important;outline-offset:3px!important}'
     + '[data-htmleditor-moving]{opacity:.45!important}[data-htmleditor-drag],[data-htmleditor-drag] *{cursor:grabbing!important}'
     + 'div[style*="break-"]:empty{border-top:2px dashed #8a8f98;margin:1.5em 0}';
+export { TEMPLATE_SYNTAX };
 /** How long after typing the preview is drawn, in milliseconds. */
 export const RENDER_DELAY = 280;
 let renderTimer = 0;
@@ -96,7 +100,7 @@ export function renderPreview() {
     if (state.textEdit) { previewWaiting = true; return; }
     previewWaiting = false;
     state.parsed = parseCode(state.code);
-    state.problems = [...state.parsed.problems, ...getMissingFileProblems()].sort((a, b) => a.pos - b.pos);
+    state.problems = [...state.parsed.problems, ...getMissingFileProblems(), ...getTemplateProblems()].sort((a, b) => a.pos - b.pos);
     if (connectPreview()) {
         try { showPreviewDocument(); } catch (e) { console.error(e); }
     }
@@ -105,6 +109,7 @@ export function renderPreview() {
     if (!ui.pictures.hidden) renderFilesTab();
     renderOutline();
     renderSettingsPanel();
+    renderTemplateControls();
     showCodeElement({ scroll: false });
 }
 
@@ -117,12 +122,13 @@ export function renderWaitingPreview() {
 }
 
 /**
- * Reads the code; when reading fails, the result is empty with the error as its problem.
+ * Reads the code; when reading fails, the result is empty with the error as its problem. With a
+ * template syntax the tags are read in safe brace form, so every tag reads as text.
  * @param {string} code - the code.
  * @returns {import('./html.js').ParsedHtml} the code as read.
  */
 function parseCode(code) {
-    try { return parse(code); } catch (e) {
+    try { return parse(convertTemplateTagsToBraces(code, TEMPLATE_SYNTAX), { isTemplate: Boolean(TEMPLATE_SYNTAX) }); } catch (e) {
         console.error(e);
         return { toks: [], elements: [], problems: [{ pos: 0, kind: 'error', msg: 'The preview failed: ' + e.message }], outline: [], refs: [], texts: [], ids: new Map(), complete: false };
     }
@@ -137,13 +143,22 @@ function getMissingFileProblems() {
 }
 
 /**
+ * Returns the problems of the template placeholders: sections that stay open, stray or misplaced
+ * end tags and tags with a sign outside the syntax.
+ * @returns {import('./html.js').HtmlProblem[]} the problems; empty without a template syntax.
+ */
+function getTemplateProblems() {
+    return TEMPLATE_SYNTAX ? checkTemplateSections(state.code, TEMPLATE_SYNTAX) : [];
+}
+
+/**
  * Puts the page into the frame with the editor's styles, keeps the frame's scroll place and
  * notes the marked elements.
  * @returns {void}
  */
 function showPreviewDocument() {
     const frameDocument = state.previewDocument;
-    const page = createPreviewDocument(state.code, state.parsed);
+    const page = createViewDocument(state.code, state.parsed);
     const scrolling = frameDocument.scrollingElement;
     const top = scrolling ? scrolling.scrollTop : 0, left = scrolling ? scrolling.scrollLeft : 0;
     state.markedElement = null;

@@ -49,6 +49,21 @@ def read(name):
         return f.read()
 
 
+
+def show_side_panel(page, is_open):
+    """Opens or closes the side panel's drawer (it is closed at the start).
+
+    Args:
+        page (Page): the editor's page or frame.
+        is_open (bool): True to open it, False to close it.
+
+    Returns:
+        None: the side panel is open or closed.
+    """
+    button = page.locator('#btn-panel')
+    if button.count() and button.is_visible() and (button.get_attribute('aria-expanded') == 'true') != is_open:
+        button.click()
+
 def set_code(page, html):
     """Sets the editor's code and waits for the preview.
 
@@ -200,6 +215,7 @@ with sync_playwright() as pw:
 
     # --- Document settings edit the head ---
     set_code(page, read('../src/js/samples.js').split('code: `')[1].split('`,')[0])
+    show_side_panel(page, True)
     page.fill('#d-title', 'A new title & more')
     page.wait_for_timeout(500)
     check_that('<title>A new title &amp; more</title>' in get_state(page, 'S.code'), 'the title field edits <title>, & as an entity')

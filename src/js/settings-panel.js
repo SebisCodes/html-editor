@@ -9,12 +9,12 @@
  */
 
 import { escapeHtml, findAttribute, getAttributeValue, getDecodedText } from './html-tokens.js?v=3';
-import { isRefTo, isOutsideRef } from './html.js?v=6';
+import { isRefTo, isOutsideRef } from './html.js?v=7';
 import { getExtension } from './assets.js?v=6';
 import { state, ui, NARROW_SCREEN, getElement, showToast } from './state.js?v=2';
 import { setCode, addTypingStep } from './history.js?v=4';
 import { getElementsByPlace } from './preview.js?v=4';
-import { findFileForRef } from './file-refs.js?v=3';
+import { findFileForRef } from './file-refs.js?v=4';
 import { showCodePosition } from './code-view.js?v=4';
 import { showPane } from './layout.js?v=4';
 import { createBlankPage } from './documents.js?v=4';

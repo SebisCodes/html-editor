@@ -22,6 +22,7 @@
  */
 
 import { VOID, parseTokens, findAttribute, getAttributeValue, getDecodedText } from './html-tokens.js?v=3';
+import { hasTemplatePlaceholder } from './template-tags.js?v=1';
 
 /** Element names a browser knows. */
 const KNOWN = new Set(('a abbr address area article aside audio b base bdi bdo blockquote body br button canvas caption cite code col colgroup '
@@ -130,18 +131,28 @@ const CSS_REF = /url\(\s*(["']?)([^"')\s]*)\1\s*\)|@import\s+(["'])([^"']+)\3/g;
  * @property {Set<string>} late - end tags whose element was closed early by a misnesting.
  * @property {Map<string, number>} opened - how many elements of each name are open, so depth and the search for an open element stay cheap in deep nesting.
  * @property {boolean} hasHtml - true once an <html> start tag is read.
+ * @property {boolean} isTemplate - true when the code is a template with placeholders.
  * @property {boolean} doctype - true once <!DOCTYPE …> is read.
  * @property {number} foreign - how many svg and math elements are open.
  * @property {boolean} seenBody - true once a <body> start tag is read.
  */
 
 /**
+ * How the code is read.
+ * @typedef {object} ParseOptions
+ * @property {boolean} [isTemplate] - true when the code is a template: an id that holds a placeholder
+ *     stands for ids filled in later and is left out of the check for ids used twice.
+ */
+
+/**
  * Reads the code (the steps in the header).
  * @param {string} source - the HTML code.
+ * @param {ParseOptions} [options={}] - how to read the code.
  * @returns {ParsedHtml} the tree, the problems and the rest the views need.
  */
-export function parse(source) {
+export function parse(source, options = {}) {
     const builder = createTreeBuilder(source);
+    builder.isTemplate = options.isTemplate === true;
     builder.tokens.forEach((token, tokenIndex) => readTreeToken(builder, token, tokenIndex));
     closeTree(builder);
     addStyleRefs(builder);
@@ -161,7 +172,7 @@ export function parse(source) {
 function createTreeBuilder(source) {
     const tokens = parseTokens(source);
     return {
-        source, tokens, problems: [], elements: [], refs: [], texts: [], ids: new Map(), stack: [],
+        source, tokens, problems: [], elements: [], refs: [], texts: [], ids: new Map(), stack: [], isTemplate: false,
         depthAt: new Array(tokens.length), late: new Set(), opened: new Map(),
         hasHtml: false, doctype: false, foreign: 0, seenBody: false,
     };
@@ -320,7 +331,7 @@ function checkAttributes(builder, token) {
         seen.add(attribute.name);
     }
     const id = getAttributeValue(token, 'id');
-    if (id) {
+    if (id && !(builder.isTemplate && hasTemplatePlaceholder(id))) {
         if (builder.ids.has(id)) addProblem(builder, findAttribute(token, 'id').a, 'error', `The id "${id}" is used twice`);
         else builder.ids.set(id, token.a);
     }

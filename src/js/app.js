@@ -14,8 +14,8 @@
  * Start-up steps:
  *   1. the interface language (the AI prompt stays English) and the line wrap of the code;
  *   2. connect the code view, the preview, the side panel, the documents, opening files, the
- *      keyboard, the layout, the Export dialog and the dialogs, in the order their listeners
- *      take events;
+ *      keyboard, the layout, the Export dialog, the dialogs and the controls of template
+ *      placeholders, in the order their listeners take events;
  *   3. take the stored settings and open the last document (or the welcome example);
  *   4. draw everything, and again once the document's files are read;
  *   5. start the AI Assistant, the WebMCP tools, the AI status, "Open in another editor" and
@@ -34,12 +34,12 @@ import { store } from './files.js?v=10';
 import { assets } from './assets.js?v=6';
 import { createAi } from './ai.js?v=10';
 import { createMcp } from './mcp.js?v=4';
-import { formatHtml } from './html-tidy.js?v=3';
+import { formatHtml } from './html-tidy.js?v=4';
 import { state, ui, areas, PREFIX, getElement, showToast } from './state.js?v=2';
 import { getSettings, startStorageSync } from './storage.js?v=4';
 import { renderCode, moveCodeLayers, showCodePosition, startCodeView } from './code-view.js?v=4';
 import { setCode, addHistoryStep, undo, redo } from './history.js?v=4';
-import { renderPreview, startPreviewFrame } from './preview.js?v=4';
+import { renderPreview, startPreviewFrame, startPreviewTimer } from './preview.js?v=4';
 import { startPictureMoving } from './picture-move.js?v=4';
 import { startProblems } from './problems.js?v=4';
 import { startTyping } from './typing.js?v=4';
@@ -52,6 +52,9 @@ import { showFilePicker, startFileImport } from './file-import.js?v=4';
 import { startKeyboard } from './keyboard.js?v=4';
 import { showSplit, showPreviewWidth, startPreviewWidth, startLayout, startDialogs } from './layout.js?v=4';
 import { startExportDialog } from './export-dialog.js?v=4';
+import { runPrint, getPlainText } from './export.js?v=4';
+import { startTemplateControls } from './template-panel.js?v=1';
+import { createTemplateExamples } from './template-examples.js?v=1';
 import { receiveDocument, importExternalDocument } from './incoming.js?v=4';
 import {
     getPromptState, getProblemList, getAgentElements, getFileList, openFileByName, createFile, addHtml, updateText, showLine,
@@ -119,6 +122,7 @@ function connectAreas() {
     startLayout();
     startExportDialog();
     startDialogs();
+    startTemplateControls();
 }
 
 /**
@@ -267,6 +271,8 @@ function createSyncEditor() {
         hookFor: id => store.getEntry(id)?.hook || null,
         setHookFor: (id, hook) => { try { store.setEntryFields(id, { hook }); } catch (e) { showToast('The browser storage is full'); } },
         onAi: () => areas.ai?.updateRemote(),
+        parseTemplate: message => createTemplateExamples(message),
+        onTemplate: () => startPreviewTimer(),
     };
 }
 
@@ -277,6 +283,6 @@ function createSyncEditor() {
 function createTestHook() {
     return {
         state, store, assets, setCode, undo, redo, renderPreview, receive: receiveDocument, revealInCode: showCodePosition,
-        sync: () => areas.sync, preview: () => state.previewDocument, tidy: formatHtml,
+        sync: () => areas.sync, preview: () => state.previewDocument, tidy: formatHtml, print: runPrint, templateText: getPlainText,
     };
 }

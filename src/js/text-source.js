@@ -2,11 +2,16 @@
  * Where a text of the preview is in the code, for editing it in place. The text lies between
  * the start tags of the marked elements before and after it; of the texts of the code there,
  * the one with the same characters (an entity counts as its character) is it. Texts in style,
- * textarea, title, select, svg, math and the like are not edited in place.
+ * textarea, title, select, svg, math and the like are not edited in place. In the example view of
+ * a template a text is edited only where the stretch between its marked elements is copied text
+ * of the template (the map of the view) and its text of the code is shown; a text with an example
+ * in it stays read-only.
  */
 
 import { getDecodedRange } from './html-tokens.js?v=3';
 import { state } from './state.js?v=2';
+import { getExampleMap } from './preview-views.js?v=1';
+import { hasFillInRange } from './template-expansion.js?v=1';
 
 /** Elements whose text is not edited in place. */
 const NOT_EDITABLE = 'style, textarea, title, select, option, noscript, svg, math, iframe, object, template, [contenteditable="true"]';
@@ -36,9 +41,36 @@ export function getTextSource(node) {
     const list = state.previewElements;
     const from = previous >= 0 ? +list[previous].getAttribute('data-hp') : 0;
     const to = previous + 1 < list.length ? +list[previous + 1].getAttribute('data-hp') : state.code.length;
-    const found = findMatchingTexts(node.data, from, to, /^(PRE|LISTING)$/.test(parent.tagName));
+    const found = findMatchingTexts(node.data, from, to, /^(PRE|LISTING)$/.test(parent.tagName)).filter(isShownInExampleView);
+    if (!isCopiedInExampleView(list, previous)) return null;
     if (found.length <= 1) return found[0] || null;
     return found[getSameTextCountBefore(node, previous)] || null;
+}
+
+/**
+ * Tells whether the text between two marked elements of the example view is copied text of the
+ * template only (no example and no empty fill in it); outside the example view always.
+ * @param {Element[]} list - the marked elements of the preview.
+ * @param {number} previous - the index of the marked element before the text, -1 for none.
+ * @returns {boolean} true when the text may be edited in place.
+ */
+function isCopiedInExampleView(list, previous) {
+    const map = getExampleMap();
+    if (!map) return true;
+    const from = previous >= 0 ? +list[previous].getAttribute('data-hv') : 0;
+    const end = previous + 1 < list.length ? +list[previous + 1].getAttribute('data-hv') : (map.length ? map[map.length - 1].viewEnd : 0);
+    return Number.isFinite(from) && Number.isFinite(end) && !hasFillInRange(map, from, end);
+}
+
+/**
+ * Tells whether a text of the code is shown in the example view (a section left out hides it);
+ * outside the example view always.
+ * @param {TextSource} source - the text's place in the code.
+ * @returns {boolean} true when the example view shows the text as copied text.
+ */
+function isShownInExampleView(source) {
+    const map = getExampleMap();
+    return !map || map.some(segment => segment.kind === 'copy' && segment.codeStart <= source.a && source.b <= segment.codeEnd);
 }
 
 /**

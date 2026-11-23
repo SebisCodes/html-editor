@@ -28,9 +28,9 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/svg+xml" href="/img/logo.svg">
-<link rel="stylesheet" href="/css/style.css?v=29">
+<link rel="stylesheet" href="/css/style.css?v=30">
 <script src="/js/lang-menu.js?v=1" defer></script>
-<script src="/js/theme.js?v=8" data-editor-page></script>
+<script src="/js/theme.js?v=9" data-editor-page></script>
 <script type="application/ld+json"><?= get_json_ld('jsonld') ?></script>
 </head>
 <body>
@@ -106,6 +106,10 @@
                 <textarea id="code" spellcheck="false" autocapitalize="off" autocomplete="off" wrap="off" aria-label="HTML code"></textarea>
             </div>
         </div>
+        <div id="placeholder-box" class="placeholder-box template-control">
+            <div id="placeholder-list" class="placeholder-list" data-placeholder-list role="group" aria-label="Placeholders" hidden></div>
+            <button type="button" class="placeholder-header" data-placeholder-toggle aria-expanded="false" aria-controls="placeholder-list" title="The placeholders of the template - a click on one puts its tag at the cursor"><svg class="arrow" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg><span>Placeholders</span><span class="placeholder-count" data-placeholder-count data-no-i18n></span></button>
+        </div>
     </section>
 
     <div id="splitter" class="splitter" role="separator" aria-orientation="vertical" aria-label="Drag to change the width of the code area" title="Drag to change the width" tabindex="0"></div>
@@ -125,6 +129,10 @@
                 <button type="button" class="tool" data-snippet="img" title="Picture" aria-label="Picture"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="m4 18 5-5 4 4 3-3 4 4"/></svg></button>
                 <button type="button" class="tool" data-snippet="a" title="Link" aria-label="Link"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></button>
             </div>
+            <div id="view-switch" class="view-switch template-control" role="radiogroup" aria-label="View of the preview">
+                <button type="button" role="radio" data-view-set="example" aria-checked="true" title="The page filled with the examples">Examples</button>
+                <button type="button" role="radio" data-view-set="template" aria-checked="false" tabindex="-1" title="The template with its placeholders as written">Template</button>
+            </div>
             <div class="group widths" role="radiogroup" aria-label="Width of the preview">
                 <button type="button" class="tool" role="radio" data-width="fill" aria-checked="true" title="As wide as the preview" aria-label="Full width"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg></button>
                 <button type="button" class="tool" role="radio" data-width="768" aria-checked="false" title="Tablet (768 pixels wide)" aria-label="Tablet width"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M11 18h2"/></svg></button>
@@ -134,10 +142,13 @@
         <div id="stage" class="stage preview" aria-label="Preview of the page: click text to edit it, or anything else to jump to its place in the code">
             <div id="scroller" class="scroller"><iframe id="preview" class="preview-page" title="Preview of the page" sandbox="allow-same-origin" src="/preview.html?v=1"></iframe></div>
             <div class="stale-hint" aria-hidden="true">Updating…</div>
+            <div id="view-note" class="view-note template-control" role="status" hidden>The examples could not be filled in - the preview shows the template</div>
         </div>
     </section>
 
-    <aside class="pane inspector" aria-label="Side panel">
+    <button type="button" class="tool panel-toggle" id="btn-panel" aria-controls="side-panel" aria-expanded="false" title="Show or hide the side panel" aria-label="Side panel"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M15 4v16"/></svg></button>
+
+    <aside class="pane inspector" id="side-panel" aria-label="Side panel">
         <div class="pane-header tabs" role="tablist">
             <button type="button" role="tab" data-itab="properties" aria-selected="true" title="Title, language, description and the stylesheets of the page">Document</button>
             <button type="button" role="tab" data-itab="insert" aria-selected="false" title="Ready-made pieces: structure, text, lists, media, forms, head">Insert</button>

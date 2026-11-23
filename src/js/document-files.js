@@ -10,7 +10,7 @@ import { assets, getFreeName, readAsDataUrl, isPicture, isKeepable, getExtension
 import { state, areas, showToast } from './state.js?v=2';
 import { setCode } from './history.js?v=4';
 import { renderPreview } from './preview.js?v=4';
-import { getFileUses } from './file-refs.js?v=3';
+import { getFileUses } from './file-refs.js?v=4';
 import { addSnippet } from './code-insert.js?v=4';
 import { renderFilesTab } from './files-tab.js?v=4';
 
