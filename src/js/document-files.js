@@ -8,11 +8,11 @@
 import { store } from './files.js?v=10';
 import { assets, getFreeName, readAsDataUrl, isPicture, isKeepable, getExtension } from './assets.js?v=6';
 import { state, areas, showToast } from './state.js?v=2';
-import { setCode } from './history.js?v=4';
-import { renderPreview } from './preview.js?v=4';
+import { setCode } from './history.js?v=5';
+import { renderPreview } from './preview.js?v=5';
 import { getFileUses } from './file-refs.js?v=4';
-import { addSnippet } from './code-insert.js?v=4';
-import { renderFilesTab } from './files-tab.js?v=4';
+import { addSnippet } from './code-insert.js?v=5';
+import { renderFilesTab } from './files-tab.js?v=5';
 
 /** The largest file a document keeps, in bytes. */
 const MAX_FILE_SIZE = 12 * 1024 * 1024;

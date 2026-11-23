@@ -6,9 +6,9 @@
 
 import { escapeHtml } from './html-tokens.js?v=3';
 import { state, ui, NARROW_SCREEN } from './state.js?v=2';
-import { getLineIndex, showCodePosition } from './code-view.js?v=4';
-import { showCodeElement } from './preview.js?v=4';
-import { showPane } from './layout.js?v=4';
+import { getLineIndex, showCodePosition } from './code-view.js?v=5';
+import { showCodeElement } from './preview.js?v=5';
+import { showPane } from './layout.js?v=5';
 
 /** The most problems listed. */
 const MAX_LISTED = 60;

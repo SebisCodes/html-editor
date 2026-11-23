@@ -7,8 +7,8 @@
 import { escapeHtml } from './html-tokens.js?v=3';
 import { isPicture } from './assets.js?v=6';
 import { state, ui, getElement, getElements } from './state.js?v=2';
-import { addSnippet, addTagAroundSelection } from './code-insert.js?v=4';
-import { renderFilesTab } from './files-tab.js?v=4';
+import { addSnippet, addTagAroundSelection } from './code-insert.js?v=5';
+import { renderFilesTab } from './files-tab.js?v=5';
 
 /** The snippets by key: [text, block, head]; "|" marks the cursor, "§" the selected text. */
 const SNIPPETS = {

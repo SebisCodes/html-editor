@@ -23,7 +23,7 @@
  *   6. offer the test hook window.htmlEditor.
  */
 
-import { createI18n } from './i18n.js?v=25';
+import { createI18n } from './i18n.js?v=26';
 import { createWrap } from './wrap.js?v=5';
 import { createAiStatus } from './aistatus.js?v=9';
 import { createSync, VIEWER } from './sync.js?v=24';
@@ -36,29 +36,29 @@ import { createAi } from './ai.js?v=10';
 import { createMcp } from './mcp.js?v=4';
 import { formatHtml } from './html-tidy.js?v=4';
 import { state, ui, areas, PREFIX, getElement, showToast } from './state.js?v=2';
-import { getSettings, startStorageSync } from './storage.js?v=4';
-import { renderCode, moveCodeLayers, showCodePosition, startCodeView } from './code-view.js?v=4';
-import { setCode, addHistoryStep, undo, redo } from './history.js?v=4';
-import { renderPreview, startPreviewFrame, startPreviewTimer } from './preview.js?v=4';
-import { startPictureMoving } from './picture-move.js?v=4';
-import { startProblems } from './problems.js?v=4';
-import { startTyping } from './typing.js?v=4';
-import { renderInsertPanel, startInsertPanel } from './insert-panel.js?v=4';
-import { startFilesTab } from './files-tab.js?v=4';
-import { startSettingsPanel } from './settings-panel.js?v=4';
-import { startOutline } from './outline.js?v=4';
-import { showFileName, openDocument, createDocumentsDialog, startDocumentButtons } from './documents.js?v=4';
-import { showFilePicker, startFileImport } from './file-import.js?v=4';
-import { startKeyboard } from './keyboard.js?v=4';
-import { showSplit, showPreviewWidth, startPreviewWidth, startLayout, startDialogs } from './layout.js?v=4';
-import { startExportDialog } from './export-dialog.js?v=4';
-import { runPrint, getPlainText } from './export.js?v=4';
-import { startTemplateControls } from './template-panel.js?v=1';
+import { getSettings, startStorageSync } from './storage.js?v=5';
+import { renderCode, moveCodeLayers, showCodePosition, startCodeView } from './code-view.js?v=5';
+import { setCode, addHistoryStep, undo, redo } from './history.js?v=5';
+import { renderPreview, startPreviewFrame, startPreviewTimer } from './preview.js?v=5';
+import { startPictureMoving } from './picture-move.js?v=5';
+import { startProblems } from './problems.js?v=5';
+import { startTyping } from './typing.js?v=5';
+import { renderInsertPanel, startInsertPanel } from './insert-panel.js?v=5';
+import { startFilesTab } from './files-tab.js?v=5';
+import { startSettingsPanel } from './settings-panel.js?v=5';
+import { startOutline } from './outline.js?v=5';
+import { showFileName, openDocument, createDocumentsDialog, startDocumentButtons } from './documents.js?v=5';
+import { showFilePicker, startFileImport } from './file-import.js?v=5';
+import { startKeyboard } from './keyboard.js?v=5';
+import { showSplit, showPreviewWidth, startPreviewWidth, startLayout, startDialogs } from './layout.js?v=5';
+import { startExportDialog } from './export-dialog.js?v=5';
+import { runPrint, getPlainText } from './export.js?v=5';
+import { startTemplateControls } from './template-panel.js?v=2';
 import { createTemplateExamples } from './template-examples.js?v=1';
-import { receiveDocument, importExternalDocument } from './incoming.js?v=4';
+import { receiveDocument, importExternalDocument } from './incoming.js?v=5';
 import {
     getPromptState, getProblemList, getAgentElements, getFileList, openFileByName, createFile, addHtml, updateText, showLine,
-} from './agent-api.js?v=4';
+} from './agent-api.js?v=5';
 
 /** The widths the preview can have. */
 const PREVIEW_WIDTHS = /^(fill|768|390)$/;
