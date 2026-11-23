@@ -83,6 +83,7 @@ Editor -> page (sent to the page around the editor, or to window.opener in its o
 - `htmleditor:closing` {id, name, unsaved, content?} - own window closes (always sent; content only when unsaved, id null before the first load)
 - `htmleditor:reload` {id, unsaved} - inside your page, F5 / Ctrl+R / Cmd+R do not reload the editor; ask the user yourself (Ctrl+W cannot be caught by a page)
 - `htmleditor:key-request` {reason:"missing"} - the editor has no AI key in this session yet
+- `htmleditor:ai-click` {request, id, name} - the user pressed the AI button (only with ai.dialog:"page"); answer within 300 ms
 
 `?embed=1&save=0` hides the editor's Save button (Ctrl+S still sends `htmleditor:save`) - for pages with their own Save button.
 
@@ -92,7 +93,8 @@ Page -> editor (only from the page around the editor or the opener; after its fi
 - `htmleditor:load` {name, content, assets?, context?, hook?, ai?, from?, target?} - open your document; with assets, they replace the document's files (send all of them; data URIs - pictures, stylesheets and fonts show in the preview, PDFs and other files are kept untouched and come back with save); from:"ai" shows a note, target:"new" opens it as a separate document in the user's browser
 - `htmleditor:get` - answered with `htmleditor:save` of your document (id and content null before the first load)
 - `htmleditor:save` - press Save
-- `htmleditor:ai` {label?, prompt?, endpoint?, key?, base?, assets?} or {clear:true} - AI through your server
+- `htmleditor:ai` {label?, prompt?, endpoint?, key?, base?, assets?, answer?, dialog?} or {clear:true} or {decline:true, message?} - AI through your server
+- `htmleditor:ai-click` {request, handled} - the answer to ai-click: handled:true when your page shows its own AI dialog
 
 Your document is the one your page loaded (or opened with ?src=). change, save, closing and get are only ever about it - never about other documents in the user's browser, also when the user opens them in the editor. A load replaces only a document that came from your page before (same name and origin), never the user's own; the AI settings and the hook from load apply only while your document is open. Your document is kept in memory only - it is never stored in the user's browser and is gone when the editor closes.
 
@@ -112,6 +114,8 @@ Fields left out keep their value; `{type:"htmleditor:ai", clear:true}` ends it. 
     {"editor":"html","target":"current"|"new","name":"<short name>","content":"<the complete HTML>"}
 
 An AI that cannot send HTTP requests answers with a link instead, which the user pastes into the editor. When your server has a result, your page sends `{type:"htmleditor:load", name, content, from:"ai", target, assets?}` (assets: the pictures the AI sent - they are ADDED to your document's pictures, the others stay; only data URIs of the types above under a plain name are taken): target "current" (or none) puts it into your document (the user sees a note; Undo takes it back; it counts as not yet saved), target "new" opens a separate document that stays in the user's browser - its edits and Save never go to your page. The key stays valid in the editor for the whole session; only when it has none at "Copy prompt", the editor sends `{type:"htmleditor:key-request", reason:"missing"}`; answer with a `htmleditor:ai` message within 5 seconds.
+
+Your own parts (in `ai` of load or in `htmleditor:ai`): `answer:"<text>"` replaces the prompt's "HOW TO ANSWER" part with your text (fenced under "HOW TO ANSWER FROM THE WEBSITE <your host>"; the prompt then carries no endpoint and no key, and no key-request is sent), `answer:"none"` leaves the part out, `answer:""` gives the editor's part back (at most 4000 characters). `dialog:"page"`: a press on the AI button while your document is open sends `{type:"htmleditor:ai-click", request, id, name}` (no content) and waits 300 ms; answer `{type:"htmleditor:ai-click", request, handled:true}` with the same request and open your own dialog - `handled:false` or no answer opens the editor's dialog; `dialog:"editor"` or `clear` ends it. To decline a key-request, answer `{type:"htmleditor:ai", decline:true, message}`: the wait ends at once, the prompt asks for a link, and after copying the user sees "<your host>: <message>" as plain text on one line (at most 200 characters, in your page's language). In every prompt the document stands in a code fence longer than any run of backticks in it, below a line that marks it as data.
 
 Safety built in: key, endpoint and prompt are only taken from the page around the editor (after its first message, only from that origin), kept in memory, never stored and never sent by the editor itself - the key only goes into the prompt the user copies. The endpoint must be https on your page's own host (with or without www.) or a subdomain of it; others are refused. Keys must be 16-512 characters of A-Z a-z 0-9 . _ ~ + / = -.
 

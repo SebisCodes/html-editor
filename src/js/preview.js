@@ -16,12 +16,12 @@ import { parse } from './html.js?v=6';
 import { state, ui, getElements } from './state.js?v=2';
 import { getMissingRefs } from './file-refs.js?v=3';
 import { createPreviewDocument } from './preview-document.js?v=3';
-import { connectPreviewDocument } from './preview-events.js?v=3';
-import { renderProblems } from './problems.js?v=3';
-import { renderCode } from './code-view.js?v=3';
-import { renderFilesTab } from './files-tab.js?v=3';
-import { renderOutline } from './outline.js?v=3';
-import { renderSettingsPanel } from './settings-panel.js?v=3';
+import { connectPreviewDocument } from './preview-events.js?v=4';
+import { renderProblems } from './problems.js?v=4';
+import { renderCode } from './code-view.js?v=4';
+import { renderFilesTab } from './files-tab.js?v=4';
+import { renderOutline } from './outline.js?v=4';
+import { renderSettingsPanel } from './settings-panel.js?v=4';
 
 /** The frame's page, from the script's own place, so it also holds on the language pages (/de/ …). */
 export const PREVIEW_URL = new URL('../preview.html?v=1', import.meta.url).href;

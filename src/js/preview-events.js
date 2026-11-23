@@ -7,16 +7,16 @@
  * connectPreviewDocument() runs once for each new document of the preview frame.
  */
 
-import { disableViewerEdits } from './sync.js?v=23';
+import { disableViewerEdits } from './sync.js?v=24';
 import { state, NARROW_SCREEN } from './state.js?v=2';
-import { showCodePosition } from './code-view.js?v=3';
-import { showCodeElementNow } from './preview.js?v=3';
-import { startTextEdit, stopTextEdit } from './text-edit.js?v=3';
+import { showCodePosition } from './code-view.js?v=4';
+import { showCodeElementNow } from './preview.js?v=4';
+import { startTextEdit, stopTextEdit } from './text-edit.js?v=4';
 import { getCaretAtPoint } from './preview-caret.js?v=2';
-import { connectPictureMoving, isMoveClick, stopMoveOnEscape } from './picture-move.js?v=3';
-import { handleShortcut } from './keyboard.js?v=3';
-import { openFiles } from './file-import.js?v=3';
-import { showPane } from './layout.js?v=3';
+import { connectPictureMoving, isMoveClick, stopMoveOnEscape } from './picture-move.js?v=4';
+import { handleShortcut } from './keyboard.js?v=4';
+import { openFiles } from './file-import.js?v=4';
+import { showPane } from './layout.js?v=4';
 
 /** Elements of the page that would navigate or send a form on a click. */
 const NAVIGATING = 'a[href], area[href], button, input[type=submit], input[type=image], input[type=reset]';

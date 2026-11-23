@@ -11,9 +11,9 @@
 import { highlight } from './html-highlight.js?v=3';
 import { escapeHtml } from './html-tokens.js?v=3';
 import { state, ui, areas, NARROW_SCREEN, LINE_HEIGHT } from './state.js?v=2';
-import { updateHistoryButtons, addHistoryStep } from './history.js?v=3';
-import { startPreviewTimer, showCodeElement, RENDER_DELAY } from './preview.js?v=3';
-import { startSaveTimer } from './storage.js?v=3';
+import { updateHistoryButtons, addHistoryStep } from './history.js?v=4';
+import { startPreviewTimer, showCodeElement, RENDER_DELAY } from './preview.js?v=4';
+import { startSaveTimer } from './storage.js?v=4';
 
 /** Code longer than this is shown without highlighting. */
 const MAX_HIGHLIGHT_LENGTH = 600000;

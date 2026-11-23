@@ -10,10 +10,10 @@ import { getRefPath } from './html.js?v=6';
 import { getDecodedText } from './html-tokens.js?v=3';
 import { getExtension, getDataUrlBytes, getDataUrlText } from './assets.js?v=6';
 import { state, showToast } from './state.js?v=2';
-import { renderPreview, PREVIEW_URL } from './preview.js?v=3';
+import { renderPreview, PREVIEW_URL } from './preview.js?v=4';
 import { findFileForRef, getFileUses, getInlineCss } from './file-refs.js?v=3';
 import { createPreviewDocument } from './preview-document.js?v=3';
-import { stopTextEdit } from './text-edit.js?v=3';
+import { stopTextEdit } from './text-edit.js?v=4';
 
 /** Whether a PDF applies page breaks: "0" off, anything else on. */
 const PAGE_BREAKS_KEY = 'htmleditor.pagebreaks';

@@ -7,11 +7,11 @@
 import { getAttributeValue, getDecodedText } from './html-tokens.js?v=3';
 import { store } from './files.js?v=10';
 import { state, ui, areas } from './state.js?v=2';
-import { setCode } from './history.js?v=3';
-import { getElementsByPlace, showCodeElementNow } from './preview.js?v=3';
-import { getLineIndex, getLineStartPlace, showCodePosition } from './code-view.js?v=3';
-import { openDocument, openNewDocument, createBlankPage } from './documents.js?v=3';
-import { receiveDocument } from './incoming.js?v=3';
+import { setCode } from './history.js?v=4';
+import { getElementsByPlace, showCodeElementNow } from './preview.js?v=4';
+import { getLineIndex, getLineStartPlace, showCodePosition } from './code-view.js?v=4';
+import { openDocument, openNewDocument, createBlankPage } from './documents.js?v=4';
+import { receiveDocument } from './incoming.js?v=4';
 
 const AI_DOCUMENT_NAME = 'AI document';
 /** The longest text list_elements shows of an element. */

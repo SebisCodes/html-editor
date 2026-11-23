@@ -23,39 +23,39 @@
  *   6. offer the test hook window.htmlEditor.
  */
 
-import { createI18n } from './i18n.js?v=24';
+import { createI18n } from './i18n.js?v=25';
 import { createWrap } from './wrap.js?v=5';
-import { createAiStatus } from './aistatus.js?v=8';
-import { createSync, VIEWER } from './sync.js?v=23';
+import { createAiStatus } from './aistatus.js?v=9';
+import { createSync, VIEWER } from './sync.js?v=24';
 import './export-menu.js?v=6';
 import { startConvert } from './convert-to.js?v=14';
 import { START } from './samples.js?v=3';
 import { store } from './files.js?v=10';
 import { assets } from './assets.js?v=6';
-import { createAi } from './ai.js?v=9';
+import { createAi } from './ai.js?v=10';
 import { createMcp } from './mcp.js?v=4';
 import { formatHtml } from './html-tidy.js?v=3';
 import { state, ui, areas, PREFIX, getElement, showToast } from './state.js?v=2';
-import { getSettings, startStorageSync } from './storage.js?v=3';
-import { renderCode, moveCodeLayers, showCodePosition, startCodeView } from './code-view.js?v=3';
-import { setCode, addHistoryStep, undo, redo } from './history.js?v=3';
-import { renderPreview, startPreviewFrame } from './preview.js?v=3';
-import { startPictureMoving } from './picture-move.js?v=3';
-import { startProblems } from './problems.js?v=3';
-import { startTyping } from './typing.js?v=3';
-import { renderInsertPanel, startInsertPanel } from './insert-panel.js?v=3';
-import { startFilesTab } from './files-tab.js?v=3';
-import { startSettingsPanel } from './settings-panel.js?v=3';
-import { startOutline } from './outline.js?v=3';
-import { showFileName, openDocument, createDocumentsDialog, startDocumentButtons } from './documents.js?v=3';
-import { showFilePicker, startFileImport } from './file-import.js?v=3';
-import { startKeyboard } from './keyboard.js?v=3';
-import { showSplit, showPreviewWidth, startPreviewWidth, startLayout, startDialogs } from './layout.js?v=3';
-import { startExportDialog } from './export-dialog.js?v=3';
-import { receiveDocument, importExternalDocument } from './incoming.js?v=3';
+import { getSettings, startStorageSync } from './storage.js?v=4';
+import { renderCode, moveCodeLayers, showCodePosition, startCodeView } from './code-view.js?v=4';
+import { setCode, addHistoryStep, undo, redo } from './history.js?v=4';
+import { renderPreview, startPreviewFrame } from './preview.js?v=4';
+import { startPictureMoving } from './picture-move.js?v=4';
+import { startProblems } from './problems.js?v=4';
+import { startTyping } from './typing.js?v=4';
+import { renderInsertPanel, startInsertPanel } from './insert-panel.js?v=4';
+import { startFilesTab } from './files-tab.js?v=4';
+import { startSettingsPanel } from './settings-panel.js?v=4';
+import { startOutline } from './outline.js?v=4';
+import { showFileName, openDocument, createDocumentsDialog, startDocumentButtons } from './documents.js?v=4';
+import { showFilePicker, startFileImport } from './file-import.js?v=4';
+import { startKeyboard } from './keyboard.js?v=4';
+import { showSplit, showPreviewWidth, startPreviewWidth, startLayout, startDialogs } from './layout.js?v=4';
+import { startExportDialog } from './export-dialog.js?v=4';
+import { receiveDocument, importExternalDocument } from './incoming.js?v=4';
 import {
     getPromptState, getProblemList, getAgentElements, getFileList, openFileByName, createFile, addHtml, updateText, showLine,
-} from './agent-api.js?v=3';
+} from './agent-api.js?v=4';
 
 /** The widths the preview can have. */
 const PREVIEW_WIDTHS = /^(fill|768|390)$/;
@@ -226,6 +226,8 @@ function startAiAndSync() {
         getRemote: () => areas.sync?.getAiSettings() || null,
         fetchKey: () => (areas.sync ? areas.sync.fetchKey() : Promise.resolve(null)),
         hasValidKey: () => !!areas.sync?.hasValidKey(),
+        handleAiClick: openEditorDialog => (areas.sync ? areas.sync.handleAiClick(openEditorDialog) : openEditorDialog()),
+        getKeyDecline: () => areas.sync?.getKeyDecline() || '',
     });
     const agent = createMcp({
         onUse: () => areas.aiStatus.addDelivery('agent'),
