@@ -6,7 +6,7 @@
  */
 
 import { state } from './state.js?v=2';
-import { getCodeEnd, getLineStart, isBlank } from './picture-drop.js?v=9';
+import { getCodeEnd, getLineStart, isBlank } from './picture-drop.js?v=10';
 
 /**
  * The code with the picture moved.

@@ -5,14 +5,14 @@
  * also when another document was opened meanwhile.
  */
 
-import { store } from './files.js?v=10';
-import { assets, getFreeName, readAsDataUrl, isPicture, isKeepable, getExtension } from './assets.js?v=6';
+import { store } from './files.js?v=11';
+import { assets, getFreeName, readAsDataUrl, isPicture, isKeepable, getExtension } from './assets.js?v=7';
 import { state, areas, showToast } from './state.js?v=2';
-import { setCode } from './history.js?v=9';
-import { renderPreview } from './preview.js?v=9';
-import { getFileUses } from './file-refs.js?v=6';
-import { addSnippet } from './code-insert.js?v=9';
-import { renderFilesTab } from './files-tab.js?v=9';
+import { setCode } from './history.js?v=10';
+import { renderPreview } from './preview.js?v=10';
+import { getFileUses } from './file-refs.js?v=7';
+import { addSnippet } from './code-insert.js?v=10';
+import { renderFilesTab } from './files-tab.js?v=10';
 
 /** The largest file a document keeps, in bytes. */
 const MAX_FILE_SIZE = 12 * 1024 * 1024;

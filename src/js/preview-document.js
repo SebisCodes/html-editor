@@ -26,7 +26,7 @@
  * The code keeps everything as it was written.
  */
 
-import { getPreviewRef, getPreviewCss, getHeldPreviewRef, getHeldPreviewCss, DATA_ADDRESS } from './file-refs.js?v=6';
+import { getPreviewRef, getPreviewCss, getHeldPreviewRef, getHeldPreviewCss, DATA_ADDRESS } from './file-refs.js?v=7';
 import { hasTemplatePlaceholder, buildTemplatePicture, getTemplateTags } from './template-tags.js?v=2';
 import { createTemplateMarking, buildTemplateMarker, setMarkedTags } from './template-markers.js?v=1';
 import { HELD_PREFIX, HELD_CSS_ATTRIBUTE, REFERENCE_ATTRIBUTES, getTagPlaces as getTagTokenPlaces } from './html-examples.js?v=2';

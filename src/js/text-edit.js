@@ -14,11 +14,11 @@
 
 import { escapeText } from './html-tokens.js?v=3';
 import { state, ui, showToast, getNumberInRange } from './state.js?v=2';
-import { renderPreview, renderWaitingPreview } from './preview.js?v=9';
-import { setCode, addTypingStep } from './history.js?v=9';
-import { showCodePosition } from './code-view.js?v=9';
+import { renderPreview, renderWaitingPreview } from './preview.js?v=10';
+import { setCode, addTypingStep } from './history.js?v=10';
+import { showCodePosition } from './code-view.js?v=10';
 import { formatBreaks } from './text-breaks.js?v=3';
-import { getTextSource } from './text-source.js?v=6';
+import { getTextSource } from './text-source.js?v=7';
 
 const SPACE = /[ \t\n\r\f]/;
 const EDIT_HINT = 'Editing in the preview - Enter: new paragraph, Shift+Enter: new line, Ctrl+Enter or a click elsewhere keeps it, Escape cancels';

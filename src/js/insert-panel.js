@@ -5,10 +5,10 @@
  */
 
 import { escapeHtml } from './html-tokens.js?v=3';
-import { isPicture } from './assets.js?v=6';
+import { isPicture } from './assets.js?v=7';
 import { state, ui, getElement, getElements } from './state.js?v=2';
-import { addSnippet, addTagAroundSelection } from './code-insert.js?v=9';
-import { renderFilesTab } from './files-tab.js?v=9';
+import { addSnippet, addTagAroundSelection } from './code-insert.js?v=10';
+import { renderFilesTab } from './files-tab.js?v=10';
 
 /** The snippets by key: [text, block, head]; "|" marks the cursor, "§" the selected text. */
 const SNIPPETS = {

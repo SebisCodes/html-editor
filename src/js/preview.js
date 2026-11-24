@@ -15,16 +15,16 @@
 
 import { parse } from './html.js?v=8';
 import { state, ui, getElements } from './state.js?v=2';
-import { getMissingRefs } from './file-refs.js?v=6';
+import { getMissingRefs } from './file-refs.js?v=7';
 import { checkTemplateSections, convertTemplateTagsToBraces } from './template-tags.js?v=2';
-import { TEMPLATE_SYNTAX, createViewDocument } from './preview-views.js?v=3';
-import { renderTemplateControls } from './template-panel.js?v=6';
-import { connectPreviewDocument } from './preview-events.js?v=9';
-import { renderProblems } from './problems.js?v=9';
-import { renderCode } from './code-view.js?v=9';
-import { renderFilesTab } from './files-tab.js?v=9';
-import { renderOutline } from './outline.js?v=9';
-import { renderSettingsPanel } from './settings-panel.js?v=9';
+import { TEMPLATE_SYNTAX, createViewDocument } from './preview-views.js?v=4';
+import { renderTemplateControls } from './template-panel.js?v=7';
+import { connectPreviewDocument } from './preview-events.js?v=10';
+import { renderProblems } from './problems.js?v=10';
+import { renderCode } from './code-view.js?v=10';
+import { renderFilesTab } from './files-tab.js?v=10';
+import { renderOutline } from './outline.js?v=10';
+import { renderSettingsPanel } from './settings-panel.js?v=10';
 
 /** The frame's page, from the script's own place, so it also holds on the language pages (/de/ …). */
 export const PREVIEW_URL = new URL('../preview.html?v=1', import.meta.url).href;

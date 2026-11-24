@@ -6,7 +6,7 @@
  */
 
 import { getRefPath, isOutsideRef, isRefTo } from './html.js?v=8';
-import { getMediaType, getDataUrlBytes, getDataUrlText } from './assets.js?v=6';
+import { getMediaType, getDataUrlBytes, getDataUrlText } from './assets.js?v=7';
 import { state } from './state.js?v=2';
 import { hasTemplatePlaceholder, buildTemplatePicture } from './template-tags.js?v=2';
 import { buildEscapeSafeCss, buildCssWithAddresses, IMPORT_ADDRESS } from './css-references.js?v=2';

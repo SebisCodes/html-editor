@@ -10,18 +10,18 @@
  */
 
 import { escapeText } from './html-tokens.js?v=3';
-import { store } from './files.js?v=10';
-import { assets } from './assets.js?v=6';
+import { store } from './files.js?v=11';
+import { assets } from './assets.js?v=7';
 import { START, TEMPLATES } from './samples.js?v=3';
 import { openConfirmation } from './dialogs.js?v=5';
 import { state, ui, areas, DEFAULT_NAME, NARROW_SCREEN, getElement, getElements, showToast } from './state.js?v=2';
-import { setCode, addHistoryStep, updateHistoryButtons, undo, redo } from './history.js?v=9';
-import { renderPreview } from './preview.js?v=9';
-import { saveWaitingEdits } from './storage.js?v=9';
-import { showCodePosition } from './code-view.js?v=9';
-import { stopTextEdit } from './text-edit.js?v=9';
-import { renderInsertPanel } from './insert-panel.js?v=9';
-import { createFilesDialog } from './files-dialog.js?v=3';
+import { setCode, addHistoryStep, updateHistoryButtons, undo, redo } from './history.js?v=10';
+import { renderPreview } from './preview.js?v=10';
+import { saveWaitingEdits } from './storage.js?v=10';
+import { showCodePosition } from './code-view.js?v=10';
+import { stopTextEdit } from './text-edit.js?v=10';
+import { renderInsertPanel } from './insert-panel.js?v=10';
+import { createFilesDialog } from './files-dialog.js?v=4';
 
 const STORAGE_FULL = 'The browser storage is full - delete or download documents under "My documents" first';
 /** The undo history of each document opened in this page, by id. */

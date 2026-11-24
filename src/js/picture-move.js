@@ -16,13 +16,13 @@
  */
 
 import { state, ui, NARROW_SCREEN, showToast, getNumberInRange } from './state.js?v=2';
-import { setCode, addTypingStep } from './history.js?v=9';
-import { renderPreview, showCodeElementNow, isPreviewScheduled } from './preview.js?v=9';
-import { showCodePosition } from './code-view.js?v=9';
-import { findPictureCode, getDropPlace } from './picture-drop.js?v=9';
-import { getMovedCode, getRemovedCode } from './picture-code.js?v=9';
-import { showPane } from './layout.js?v=9';
-import { VIEWER } from './sync.js?v=25';
+import { setCode, addTypingStep } from './history.js?v=10';
+import { renderPreview, showCodeElementNow, isPreviewScheduled } from './preview.js?v=10';
+import { showCodePosition } from './code-view.js?v=10';
+import { findPictureCode, getDropPlace } from './picture-drop.js?v=10';
+import { getMovedCode, getRemovedCode } from './picture-code.js?v=10';
+import { showPane } from './layout.js?v=10';
+import { VIEWER } from './sync.js?v=26';
 import { startPictureRemover, connectPictureRemover } from './picture-remove.js?v=1';
 
 /** Pixels a mouse moves before a press becomes a move. */

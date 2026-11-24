@@ -7,17 +7,17 @@
  * connectPreviewDocument() runs once for each new document of the preview frame.
  */
 
-import { disableViewerEdits } from './sync.js?v=25';
+import { disableViewerEdits } from './sync.js?v=26';
 import { state, NARROW_SCREEN } from './state.js?v=2';
-import { showCodePosition } from './code-view.js?v=9';
-import { showCodeElementNow } from './preview.js?v=9';
-import { startTextEdit, stopTextEdit } from './text-edit.js?v=9';
+import { showCodePosition } from './code-view.js?v=10';
+import { showCodeElementNow } from './preview.js?v=10';
+import { startTextEdit, stopTextEdit } from './text-edit.js?v=10';
 import { getCaretAtPoint } from './preview-caret.js?v=2';
-import { connectPictureMoving, isMoveClick, stopMoveOnEscape } from './picture-move.js?v=9';
+import { connectPictureMoving, isMoveClick, stopMoveOnEscape } from './picture-move.js?v=10';
 import { handlePictureClick } from './picture-remove.js?v=1';
-import { handleShortcut } from './keyboard.js?v=9';
-import { openFiles } from './file-import.js?v=9';
-import { showPane } from './layout.js?v=9';
+import { handleShortcut } from './keyboard.js?v=10';
+import { openFiles } from './file-import.js?v=10';
+import { showPane } from './layout.js?v=10';
 
 /** Elements of the page that would navigate or send a form on a click. */
 const NAVIGATING = 'a[href], area[href], button, input[type=submit], input[type=image], input[type=reset]';
