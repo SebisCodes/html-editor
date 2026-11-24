@@ -10,9 +10,9 @@ import { createZip } from './zip.js?v=4';
 import { saveFile, getSafeName } from './util.js?v=3';
 import { openDialog } from './dialogs.js?v=5';
 import { state, ui, areas, getElement, showToast } from './state.js?v=2';
-import { renderPreview } from './preview.js?v=8';
-import { stopTextEdit } from './text-edit.js?v=8';
-import { isPageBreaksOn, setPageBreaks, getSingleHtml, getZipFiles, getPlainText, runPrint } from './export.js?v=8';
+import { renderPreview } from './preview.js?v=9';
+import { stopTextEdit } from './text-edit.js?v=9';
+import { isPageBreaksOn, setPageBreaks, getSingleHtml, getZipFiles, getPlainText, runPrint } from './export.js?v=9';
 
 let dialog = null, nameField = null, formatField = null, textField = null, infoLine = null;
 

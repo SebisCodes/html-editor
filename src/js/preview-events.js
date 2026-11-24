@@ -9,14 +9,15 @@
 
 import { disableViewerEdits } from './sync.js?v=25';
 import { state, NARROW_SCREEN } from './state.js?v=2';
-import { showCodePosition } from './code-view.js?v=8';
-import { showCodeElementNow } from './preview.js?v=8';
-import { startTextEdit, stopTextEdit } from './text-edit.js?v=8';
+import { showCodePosition } from './code-view.js?v=9';
+import { showCodeElementNow } from './preview.js?v=9';
+import { startTextEdit, stopTextEdit } from './text-edit.js?v=9';
 import { getCaretAtPoint } from './preview-caret.js?v=2';
-import { connectPictureMoving, isMoveClick, stopMoveOnEscape } from './picture-move.js?v=8';
-import { handleShortcut } from './keyboard.js?v=8';
-import { openFiles } from './file-import.js?v=8';
-import { showPane } from './layout.js?v=8';
+import { connectPictureMoving, isMoveClick, stopMoveOnEscape } from './picture-move.js?v=9';
+import { handlePictureClick } from './picture-remove.js?v=1';
+import { handleShortcut } from './keyboard.js?v=9';
+import { openFiles } from './file-import.js?v=9';
+import { showPane } from './layout.js?v=9';
 
 /** Elements of the page that would navigate or send a form on a click. */
 const NAVIGATING = 'a[href], area[href], button, input[type=submit], input[type=image], input[type=reset]';
@@ -46,8 +47,9 @@ export function connectPreviewDocument(frameDocument) {
 }
 
 /**
- * Leads a click in the preview to the place of the clicked element in the code; links do not
- * navigate, and the click that ends moving a picture or selects text does nothing.
+ * Leads a click in the preview to the place of the clicked element in the code; a click on a
+ * picture selects it (picture-remove.js); links do not navigate, and the click that ends moving
+ * a picture or selects text does nothing.
  * @param {Document} frameDocument - the preview document.
  * @param {MouseEvent} event - the click.
  * @returns {void}
@@ -56,6 +58,7 @@ function showClickedElement(frameDocument, event) {
     if (event.target.closest?.(NAVIGATING)) event.preventDefault();
     if (isMoveClick()) { event.stopPropagation(); return; }
     if (state.textEdit || event.target.closest?.('[data-htmleditor-edit]')) return;
+    if (handlePictureClick(event)) return;
     const selection = frameDocument.getSelection();
     if (selection && !selection.isCollapsed) return;                    // the user selects text
     const element = event.target.closest?.('[data-hp]');

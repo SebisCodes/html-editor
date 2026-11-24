@@ -7,10 +7,10 @@
 
 import { openDialog } from './dialogs.js?v=5';
 import { ui, areas, getElement } from './state.js?v=2';
-import { undo, redo } from './history.js?v=8';
-import { saveQuickly, openExportDialog } from './export-dialog.js?v=8';
-import { runPrint } from './export.js?v=8';
-import { setNewMenuOpen, isNewMenuOpen } from './documents.js?v=8';
+import { undo, redo } from './history.js?v=9';
+import { saveQuickly, openExportDialog } from './export-dialog.js?v=9';
+import { runPrint } from './export.js?v=9';
+import { setNewMenuOpen, isNewMenuOpen } from './documents.js?v=9';
 
 /** Fields the user types into: shortcuts without Ctrl pause there, and pasting goes into them. */
 export const TYPING_FIELDS = 'textarea, select, [contenteditable], input:not([type=checkbox]):not([type=radio]):not([type=range]):not([type=color]):not([type=button])';

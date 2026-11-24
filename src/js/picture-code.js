@@ -1,12 +1,12 @@
 /**
- * The code with a picture moved where it was dropped (picture-drop.js finds the place). Code on
- * lines of its own moves as whole lines, indented as the target; code within a line takes one
- * space next to it along. Two pictures alone in their table cells change places. Cells, rows
- * and the elements around stay as they are.
+ * The code with a picture moved where it was dropped (picture-drop.js finds the place), or
+ * removed. Code on lines of its own moves as whole lines, indented as the target; code within a
+ * line takes one space next to it along. Two pictures alone in their table cells change places.
+ * Cells, rows and the elements around stay as they are.
  */
 
 import { state } from './state.js?v=2';
-import { getCodeEnd, getLineStart, isBlank } from './picture-drop.js?v=8';
+import { getCodeEnd, getLineStart, isBlank } from './picture-drop.js?v=9';
 
 /**
  * The code with the picture moved.
@@ -62,6 +62,21 @@ function getRelocatedCode(move, place) {
     if (moved === code) return null;
     const start = (at <= cut.start ? at : at - (cut.end - cut.start)) + insertion.lead.length;
     return { code: moved, a: start, b: start + body.length };
+}
+
+/**
+ * Returns the code without a picture: its whole lines when it stands on lines of its own (with
+ * one blank line of two around them), else the code with one space next to it.
+ * @param {import('./html.js').HtmlElement} source - the picture's code.
+ * @returns {{code: string, at: number}} the code without the picture and where the picture stood.
+ */
+export function getRemovedCode(source) {
+    const code = state.code, cut = getCutRange(source);
+    let end = cut.end;
+    const nextLineEnd = code.indexOf('\n', end);
+    const blankBefore = cut.start === 0 || /\n[ \t]*\n$/.test(code.slice(0, cut.start));
+    if (code[cut.end - 1] === '\n' && blankBefore && nextLineEnd >= 0 && !code.slice(end, nextLineEnd).trim()) end = nextLineEnd + 1;
+    return { code: code.slice(0, cut.start) + code.slice(end), at: cut.start };
 }
 
 /**

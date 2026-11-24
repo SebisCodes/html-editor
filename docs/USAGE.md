@@ -36,10 +36,9 @@ your documents stay there unless you send them somewhere yourself.
 
 ## Side panel
 
-The side panel holds the document settings, Insert, Files and the Outline. The button at the top right of the work area opens it over the
-preview, below the preview's bar, and closes it again (Escape too); it is closed when the editor
-opens. The bar's controls (the view switch and the width buttons) stay in view and usable while it is open. On a phone it is the
-view **Edit**.
+The side panel holds the document settings, Insert, Files and the Outline. The button at the top right of the work area opens it as a
+column right of the preview, which gets narrower, and closes it again; it is closed when the
+editor opens. On a phone it is the view **Edit**.
 
 ## Templates with placeholders
 
@@ -58,7 +57,9 @@ block is split, and inline elements around the text are closed and opened again)
 **Shift+Enter** inserts `<br>`. **Ctrl+Enter** (Cmd+Enter on macOS) or a click elsewhere
 applies the edit; **Escape** cancels. `&`, `<` and `>` are written as entities. Each edit is
 one step for Undo. A click on a picture or any other element jumps to its place in the code;
-the element at the code cursor gets a frame in the preview.
+the element at the code cursor gets a frame in the preview. A clicked picture shows an X at its
+top right corner: the X, or **Delete**, takes it out of the code in one Undo step, and its file
+stays with the page. Dragging a picture moves it in the code.
 
 The right side panel has four tabs: **Document** (title, language and description of the
 page), **Insert**, **Files** (the pictures, stylesheets and fonts of the page) and

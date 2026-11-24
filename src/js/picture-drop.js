@@ -13,7 +13,7 @@
  */
 
 import { state } from './state.js?v=2';
-import { getElementsByPlace } from './preview.js?v=8';
+import { getElementsByPlace } from './preview.js?v=9';
 
 /** Elements a picture can go into, between their blocks. */
 const BOXES = /^(body|div|section|article|main|aside|header|footer|nav|blockquote|li|dd|td|th|details|form|fieldset|center)$/;

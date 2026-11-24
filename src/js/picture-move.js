@@ -12,14 +12,18 @@
  *   3. on release the code changes, unless the code changed meanwhile; Escape cancels, and the
  *      click after a move is no click. While a finger moves a picture the page does not scroll,
  *      and its long press shows no menu.
+ * A click selects a picture; its X or the Delete key removes its code (picture-remove.js).
  */
 
-import { state, ui, showToast, getNumberInRange } from './state.js?v=2';
-import { setCode, addTypingStep } from './history.js?v=8';
-import { renderPreview, showCodeElementNow, isPreviewScheduled } from './preview.js?v=8';
-import { showCodePosition } from './code-view.js?v=8';
-import { findPictureCode, getDropPlace } from './picture-drop.js?v=8';
-import { getMovedCode } from './picture-code.js?v=8';
+import { state, ui, NARROW_SCREEN, showToast, getNumberInRange } from './state.js?v=2';
+import { setCode, addTypingStep } from './history.js?v=9';
+import { renderPreview, showCodeElementNow, isPreviewScheduled } from './preview.js?v=9';
+import { showCodePosition } from './code-view.js?v=9';
+import { findPictureCode, getDropPlace } from './picture-drop.js?v=9';
+import { getMovedCode, getRemovedCode } from './picture-code.js?v=9';
+import { showPane } from './layout.js?v=9';
+import { VIEWER } from './sync.js?v=25';
+import { startPictureRemover, connectPictureRemover } from './picture-remove.js?v=1';
 
 /** Pixels a mouse moves before a press becomes a move. */
 const DRAG_MIN = 4;
@@ -80,11 +84,13 @@ export function startPictureMoving() {
 }
 
 /**
- * Follows the pointer in a new preview document: its own pointer events come first.
+ * Follows the pointer in each preview document: its own pointer events come first; a picture
+ * selected there can be removed with its X or the Delete key.
  * @param {Document} frameDocument - the preview document.
  * @returns {void}
  */
 export function connectPictureMoving(frameDocument) {
+    connectPictureRemover(frameDocument);
     frameDocument.addEventListener('pointerdown', startPicturePress, true);
     frameDocument.addEventListener('pointermove', movePicture, true);
     frameDocument.addEventListener('pointerup', stopMove, true);
@@ -275,4 +281,70 @@ export function stopMoveOnEscape(event) {
     event.stopPropagation();
     stopMoving(moving);
     return true;
+}
+
+/**
+ * Finds the picture of the preview that a clicked element belongs to.
+ * @param {Element} target - the clicked element.
+ * @returns {Element|null} the picture, null when the element is no picture of the preview.
+ */
+function findClickedPicture(target) {
+    const picture = target.closest('img[data-hp]');
+    return picture && state.parsed && !state.textEdit && findPictureCode(picture) ? picture : null;
+}
+
+/**
+ * Returns the box of a picture of the preview in the editor's window, cut to the visible part
+ * of the preview.
+ * @param {Element} picture - the picture.
+ * @returns {DOMRect|null} the visible box, null when the picture is out of view.
+ */
+function getPictureBox(picture) {
+    const frame = ui.frame.getBoundingClientRect(), box = picture.getBoundingClientRect();
+    const left = Math.max(frame.left, frame.left + ui.frame.clientLeft + box.left), top = Math.max(frame.top, frame.top + ui.frame.clientTop + box.top);
+    const right = Math.min(frame.right, frame.left + ui.frame.clientLeft + box.right), bottom = Math.min(frame.bottom, frame.top + ui.frame.clientTop + box.bottom);
+    return right > left && bottom > top ? new DOMRect(left, top, right - left, bottom - top) : null;
+}
+
+/**
+ * Leads the code to a picture's place, with the focus kept on the preview.
+ * @param {Element} picture - the picture.
+ * @param {boolean} openCode - true to show the code on a narrow screen.
+ * @returns {void}
+ */
+function showPictureCode(picture, openCode) {
+    if (openCode) showPane('code');
+    showCodePosition(+picture.getAttribute('data-hp'), false);
+    showCodeElementNow();
+}
+
+/**
+ * Removes a picture's code as one undo step, when the preview shows the current code.
+ * @param {Element} picture - the picture.
+ * @returns {void}
+ */
+function removePicture(picture) {
+    const source = isPreviewScheduled() || !state.parsed ? null : findPictureCode(picture);
+    if (!source) { showToast('The code changed meanwhile - the picture was not removed'); renderPreview(); return; }
+    const removed = getRemovedCode(source);
+    addTypingStep();
+    setCode(removed.code);
+    showCodePosition(removed.at, false);
+}
+
+/**
+ * Starts the selection of pictures in the preview with their X and the Delete key.
+ * @returns {void}
+ */
+export function startPictureRemoving() {
+    startPictureRemover({
+        layer: ui.stage,
+        findPicture: findClickedPicture,
+        getPictureBox,
+        showPictureCode,
+        removePicture,
+        getCode: () => state.code,
+        isNarrowScreen: () => NARROW_SCREEN.matches,
+        isEnabled: () => !VIEWER,
+    });
 }

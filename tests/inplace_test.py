@@ -531,6 +531,91 @@ with sync_playwright() as pw:
     check_that(get_code(tp) == PICS and tp.evaluate('() => { const t = document.querySelector("#code"); return t.value.slice(t.selectionStart).startsWith("<img id=\\"blue\\""); }'), 'a tap on a picture still puts the code cursor on it')
     check_that(not errors, 'no script errors with a finger' + (': ' + '; '.join(errors) if errors else ''))
     tctx.close()
+
+    # Removing pictures: a click selects a picture, its X or Delete removes its code
+    remove_doc = ('<!DOCTYPE html>\n<html>\n<body>\n  <p>First paragraph.</p>\n\n  <p><img id="red" src="PIC" alt="Red" width="120" height="80"></p>\n\n  <p>Second paragraph.</p>\n'
+                  '  <figure>\n    <img id="blue" src="PIC" alt="Blue" width="100" height="60">\n    <figcaption>A caption</figcaption>\n  </figure>\n'
+                  '  <p>Text <a href="https://example.com/"><img id="linked" src="PIC" alt="Linked" width="60" height="40"></a> in a line.</p>\n'
+                  '  <picture><source srcset="PIC"><img id="pictured" src="PIC" alt="Pictured" width="60" height="40"></picture>\n  <p>Last paragraph.</p>\n</body>\n</html>\n').replace('PIC', PIC)
+    get_frame_box = '(s) => { const b = htmlEditor.preview().querySelector(s).getBoundingClientRect(), f = document.getElementById("preview").getBoundingClientRect(); return { x: f.left + b.left, y: f.top + b.top, width: b.width, height: b.height }; }'
+    for width in (1440, 390):
+        rctx = browser.new_context(viewport={'width': width, 'height': 900})
+        rp = rctx.new_page()
+        rp.on('pageerror', lambda e: errors.append(str(e)))
+        rp.goto(URL + ('de/' if width == 390 else ''), wait_until='networkidle')
+        rp.wait_for_timeout(600)
+        rp.evaluate('t => htmlEditor.setCode(t)', remove_doc)
+        rp.wait_for_timeout(800)
+        if width < 860:
+            rp.click('[data-pane=draw]')
+            rp.wait_for_timeout(300)
+        else:
+            rp.click('#code')
+        tag = f'{width} px: '
+        layout = '() => { const d = htmlEditor.preview().body.getBoundingClientRect(); return [...htmlEditor.preview().querySelectorAll("body *")].map(e => { const r = e.getBoundingClientRect(); return [r.x - d.x, r.y - d.y, r.width, r.height].join(); }).join(";"); }'
+        before = rp.evaluate(layout)
+        x, y = get_preview_point(rp, '#red')
+        rp.mouse.click(x, y)
+        rp.wait_for_timeout(250)
+        box = rp.evaluate(get_frame_box, '#red')
+        xb = rp.locator('.picture-remove').bounding_box()
+        check_that(rp.locator('.picture-outline').is_visible() and xb and xb['width'] >= 24 and xb['height'] >= 24, tag + 'a click on a picture shows its outline and the X')
+        check_that(xb and box['x'] < xb['x'] and xb['x'] + xb['width'] <= box['x'] + box['width'] + 0.5 and box['y'] - 0.5 <= xb['y'] < box['y'] + 10, tag + 'the X stands at the top right corner inside the picture')
+        check_that(rp.evaluate(layout) == before, tag + 'the X and the outline move nothing in the preview')
+        check_that(rp.locator('.picture-remove').get_attribute('title') == ('Bild entfernen' if width == 390 else 'Remove picture'), tag + 'the X is named in the language of the page')
+        check_that(rp.locator('#code').is_visible() != (width < 860), tag + 'the click leads to the code (on a phone the preview stays)')
+        rp.keyboard.press('Delete')
+        rp.wait_for_timeout(600)
+        red = '  <p><img id="red" src="' + PIC + '" alt="Red" width="120" height="80"></p>\n\n'
+        check_that(get_code(rp) == remove_doc.replace(red, '', 1), tag + 'Delete removes the paragraph that holds only the picture, and its blank line')
+        rp.keyboard.press('Control+z')
+        rp.wait_for_timeout(600)
+        check_that(get_code(rp) == remove_doc, tag + 'one Undo brings the picture back')
+        figure = '  <figure>\n    <img id="blue" src="' + PIC + '" alt="Blue" width="100" height="60">\n    <figcaption>A caption</figcaption>\n  </figure>\n'
+        for sel, kind, removed in (('#blue', 'the figure', remove_doc.replace(figure, '', 1)),
+                                   ('#linked', 'a picture with its link and one space', remove_doc.replace(' <a href="https://example.com/"><img id="linked" src="' + PIC + '" alt="Linked" width="60" height="40"></a>', '', 1)),
+                                   ('#pictured', 'the <picture>', remove_doc.replace('  <picture><source srcset="' + PIC + '"><img id="pictured" src="' + PIC + '" alt="Pictured" width="60" height="40"></picture>\n', '', 1))):
+            rp.evaluate('s => htmlEditor.preview().querySelector(s).scrollIntoView({ block: "center" })', sel)
+            rp.wait_for_timeout(200)
+            x, y = get_preview_point(rp, sel, 0.9, 0.1)
+            rp.mouse.click(x, y)
+            rp.wait_for_timeout(250)
+            rp.click('.picture-remove')
+            rp.wait_for_timeout(600)
+            check_that(get_code(rp) == removed, tag + 'the X removes ' + kind)
+            rp.keyboard.press('Control+z')
+            rp.wait_for_timeout(600)
+        rp.evaluate('() => htmlEditor.preview().scrollingElement.scrollTop = 0')
+        rp.wait_for_timeout(200)
+        x, y = get_preview_point(rp, '#red', 0.9, 0.1)
+        rp.mouse.click(x, y)
+        rp.wait_for_timeout(250)
+        rp.keyboard.press('Escape')
+        check_that(rp.locator('.picture-remove').is_hidden() and rp.locator('.picture-outline').is_hidden(), tag + 'Escape hides the X')
+        rp.mouse.click(x, y)
+        rp.wait_for_timeout(250)
+        rp.evaluate('() => htmlEditor.preview().querySelector("p").dispatchEvent(new PointerEvent("pointerdown", { bubbles: true }))')
+        check_that(rp.locator('.picture-remove').is_hidden(), tag + 'a press elsewhere hides the X')
+        if width < 860:
+            rp.mouse.click(x, y)
+            rp.wait_for_timeout(250)
+            rp.mouse.click(x, y)
+            rp.wait_for_timeout(250)
+            check_that(rp.locator('#code').is_visible(), tag + 'a tap on the selected picture opens the code')
+        else:
+            rp.mouse.click(x, y)
+            rp.wait_for_timeout(250)
+            rp.evaluate('() => { const t = document.querySelector("#code"); t.focus(); t.setSelectionRange(0, 0); }')
+            rp.keyboard.press('Delete')
+            rp.wait_for_timeout(400)
+            check_that(get_code(rp) == remove_doc[1:], tag + 'Delete in the code edits the code')
+            rp.keyboard.press('Control+z')
+            rp.wait_for_timeout(600)
+            rp.mouse.click(x, y)
+            rp.wait_for_timeout(250)
+            move_picture(rp, '#red', ('#blue', 0.9))
+            check_that(get_code(rp) != remove_doc and get_code(rp).count('id="red"') == 1 and rp.locator('.picture-remove').is_hidden(), tag + 'a selected picture still moves by dragging, and the X goes')
+        rctx.close()
     browser.close()
 
 print(f'\n{len(failures)} failed' if failures else '\nall passed')

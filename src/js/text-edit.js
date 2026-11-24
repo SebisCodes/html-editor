@@ -14,9 +14,9 @@
 
 import { escapeText } from './html-tokens.js?v=3';
 import { state, ui, showToast, getNumberInRange } from './state.js?v=2';
-import { renderPreview, renderWaitingPreview } from './preview.js?v=8';
-import { setCode, addTypingStep } from './history.js?v=8';
-import { showCodePosition } from './code-view.js?v=8';
+import { renderPreview, renderWaitingPreview } from './preview.js?v=9';
+import { setCode, addTypingStep } from './history.js?v=9';
+import { showCodePosition } from './code-view.js?v=9';
 import { formatBreaks } from './text-breaks.js?v=3';
 import { getTextSource } from './text-source.js?v=6';
 
