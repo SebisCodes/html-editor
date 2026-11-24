@@ -13,11 +13,11 @@
  */
 
 import { state, areas } from './state.js?v=2';
-import { getTemplateSyntax, getTemplateNameByAddress } from './template-tags.js?v=1';
-import { buildViewTitle } from './template-controls.js?v=1';
-import { buildHtmlView, buildExampleSource } from './html-examples.js?v=1';
-import { createPreviewDocument, createExamplePreviewDocument } from './preview-document.js?v=4';
-import { getHeldPreviewCss } from './file-refs.js?v=4';
+import { getTemplateSyntax, getTemplateNameByAddress } from './template-tags.js?v=2';
+import { buildViewTitle } from './template-controls.js?v=2';
+import { buildHtmlView, buildExampleSource } from './html-examples.js?v=2';
+import { createPreviewDocument, createExamplePreviewDocument } from './preview-document.js?v=5';
+import { getHeldPreviewCss } from './file-refs.js?v=5';
 
 /** The template syntax of the placeholders the address asks for with ?template=, or null. */
 export const TEMPLATE_SYNTAX = getTemplateSyntax(getTemplateNameByAddress(location.search));

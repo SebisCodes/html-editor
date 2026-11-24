@@ -15,9 +15,9 @@
  *      source: such an address can only show an example picture or a file of the document.
  */
 
-import { getTemplateTags, hasTemplatePlaceholder } from './template-tags.js?v=1';
-import { expandTemplate, getCodeOffsetByViewOffset, hasFillInRange } from './template-expansion.js?v=1';
-import { parse } from './html.js?v=7';
+import { getTemplateTags, hasTemplatePlaceholder } from './template-tags.js?v=2';
+import { expandTemplate, getCodeOffsetByViewOffset, hasFillInRange } from './template-expansion.js?v=2';
+import { parse } from './html.js?v=8';
 import { findAttribute } from './html-tokens.js?v=3';
 
 /** The prefix of an attribute held back from the browser until the preview resolves it. */

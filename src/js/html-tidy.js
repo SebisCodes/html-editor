@@ -12,7 +12,7 @@
  * gives the same code.
  */
 
-import { parse } from './html.js?v=7';
+import { parse } from './html.js?v=8';
 
 /** Elements that start on a line of their own when tidying: blocks of the body and the elements of the head. */
 const OWN_LINE = new Set(['html', 'head', 'body', 'title', 'meta', 'link', 'style', 'script', 'base', 'noscript',

@@ -4,8 +4,8 @@
  */
 
 import { state, ui } from './state.js?v=2';
-import { addHistoryStep } from './history.js?v=6';
-import { showCodeElement } from './preview.js?v=6';
+import { addHistoryStep } from './history.js?v=7';
+import { showCodeElement } from './preview.js?v=7';
 
 /** Where the cursor goes in a snippet. */
 const CURSOR_MARK = '|';

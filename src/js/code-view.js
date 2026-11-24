@@ -9,12 +9,12 @@
  */
 
 import { highlight } from './html-highlight.js?v=3';
-import { buildHighlightWithTemplateTags, convertTemplateTagsToBraces } from './template-tags.js?v=1';
+import { buildHighlightWithTemplateTags, convertTemplateTagsToBraces } from './template-tags.js?v=2';
 import { escapeHtml } from './html-tokens.js?v=3';
 import { state, ui, areas, NARROW_SCREEN, LINE_HEIGHT } from './state.js?v=2';
-import { updateHistoryButtons, addHistoryStep } from './history.js?v=6';
-import { startPreviewTimer, showCodeElement, RENDER_DELAY, TEMPLATE_SYNTAX } from './preview.js?v=6';
-import { startSaveTimer } from './storage.js?v=6';
+import { updateHistoryButtons, addHistoryStep } from './history.js?v=7';
+import { startPreviewTimer, showCodeElement, RENDER_DELAY, TEMPLATE_SYNTAX } from './preview.js?v=7';
+import { startSaveTimer } from './storage.js?v=7';
 
 /** Code longer than this is shown without highlighting. */
 const MAX_HIGHLIGHT_LENGTH = 600000;

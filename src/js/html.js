@@ -22,7 +22,7 @@
  */
 
 import { VOID, parseTokens, findAttribute, getAttributeValue, getDecodedText } from './html-tokens.js?v=3';
-import { hasTemplatePlaceholder } from './template-tags.js?v=1';
+import { hasTemplatePlaceholder } from './template-tags.js?v=2';
 
 /** Element names a browser knows. */
 const KNOWN = new Set(('a abbr address area article aside audio b base bdi bdo blockquote body br button canvas caption cite code col colgroup '

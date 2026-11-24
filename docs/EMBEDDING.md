@@ -183,7 +183,8 @@ frame.contentWindow.postMessage({
   the preview's bar shows the tags as text.
 - Each example is written for its place: text and attribute values get the characters of markup as entities, CSS only plain words, scripts, event attributes and the markup itself nothing. An address that holds a placeholder in
   your template is never loaded, also when it is filled with an example; only an example picture
-  from `assets` or a file of the page is shown there.
+  from `assets` or a file of the page is shown there. CSS with an escape that could spell an address
+  (such as `u\72l(`) and a stylesheet given as a data address are left out of the preview.
 - Each message replaces the list before it; `{ type: 'htmleditor:template', clear: true }` (or
   `template: null` in a load) ends it, a load without `template` keeps it. The list belongs to your
   page: other documents of the user show the labels in brackets.

@@ -5,23 +5,20 @@
  * data: …) mean no file.
  */
 
-import { getRefPath, isOutsideRef, isRefTo } from './html.js?v=7';
+import { getRefPath, isOutsideRef, isRefTo } from './html.js?v=8';
 import { getMediaType, getDataUrlBytes, getDataUrlText } from './assets.js?v=6';
 import { state } from './state.js?v=2';
-import { hasTemplatePlaceholder, buildTemplatePicture } from './template-tags.js?v=1';
+import { hasTemplatePlaceholder, buildTemplatePicture } from './template-tags.js?v=2';
+import { buildEscapeSafeCss, buildCssWithAddresses, IMPORT_ADDRESS } from './css-references.js?v=1';
 
-/** url(…) in any case, its address quoted (parentheses allowed inside) or unquoted. */
-const CSS_URL_ANY = /url\(\s*(?:"([^"]*)"|'([^']*)'|([^)"']*?))\s*\)/gi;
-/** @import with a quoted address, also inside url(). */
-const CSS_IMPORT_ANY = /@import\s*(?:url\(\s*)?(["'])([^"']*)\1\s*\)?/gi;
 /** An empty stylesheet, in the place of an imported one whose address holds a placeholder. */
 const EMPTY_STYLESHEET = 'data:text/css,';
+/** A data address: a stylesheet given as one can name further addresses in an encoding of its own. */
+export const DATA_ADDRESS = /^\s*data:/i;
+/** A data address anywhere in CSS. */
+const DATA_IN_CSS = /data:/i;
 /** url(…) and @import "…" in CSS. */
 const CSS_REF = /url\(\s*(["']?)([^"')\s]*)\1\s*\)|@import\s*(["'])([^"']+)\3/g;
-/** A CSS comment, also one left open at the end. */
-const CSS_COMMENT = /\/\*[\s\S]*?(\*\/|$)/g;
-/** url( up to its end or the end of the CSS, also without a closing parenthesis. */
-const CSS_URL_OPEN = /url\(\s*(?:"([^"]*)"?|'([^']*)'?|([^)"']*?))\s*(?:\)|$)/gi;
 /** The blob: address of each file for the preview, made again when the files change. */
 let blobUrls = new Map();
 let blobUrlsFiles = null;
@@ -92,20 +89,31 @@ export function getPreviewRef(value) {
 }
 
 /**
- * Builds a CSS text in which every url(…) whose address holds a placeholder names a placeholder
- * picture and every such @import an empty stylesheet, so the preview requests nothing for them;
- * comments of such CSS are taken out, so none hides an address from the patterns.
+ * Builds a CSS text for the preview: pieces with an escape that could spell an address are left
+ * out (css-references.js), and in CSS that holds a placeholder or a data address every url(),
+ * string of image-set() and @import whose address holds a placeholder names a placeholder
+ * picture or an empty stylesheet, as does an @import of a data address, so the preview requests
+ * nothing for them; such CSS is read with each comment as a space.
  * @param {string} css - the CSS.
- * @returns {string} the CSS with the placeholder addresses in their preview form.
+ * @returns {string} the CSS with the placeholder addresses in their preview form; the CSS itself when nothing is held.
  */
 function buildPlaceholderCss(css) {
-    if (!hasTemplatePlaceholder(css)) return css;
-    return css.replace(CSS_COMMENT, '')
-        .replace(CSS_IMPORT_ANY, (whole, quote, address) => (hasTemplatePlaceholder(address) ? `@import "${EMPTY_STYLESHEET}"` : whole))
-        .replace(CSS_URL_ANY, (whole, doubleQuoted, singleQuoted, bare) => {
-            const address = doubleQuoted ?? singleQuoted ?? bare ?? '';
-            return hasTemplatePlaceholder(address) ? `url("${buildTemplatePicture(address)}")` : whole;
-        });
+    const safe = buildEscapeSafeCss(css);
+    return hasTemplatePlaceholder(safe) || DATA_IN_CSS.test(safe) ? buildCssWithAddresses(safe, getPlaceholderAddress) : safe;
+}
+
+/**
+ * Returns the address the preview writes for an address of CSS: an @import of a data address or
+ * of an address with a placeholder an empty stylesheet, any other address with a placeholder the
+ * placeholder picture.
+ * @param {string} address - the address as written.
+ * @param {string} kind - IMPORT_ADDRESS or the kind of a picture or font (css-references.js).
+ * @returns {?string} the address to write, null to keep the address as written.
+ */
+function getPlaceholderAddress(address, kind) {
+    if (kind === IMPORT_ADDRESS && DATA_ADDRESS.test(address)) return EMPTY_STYLESHEET;
+    if (!hasTemplatePlaceholder(address)) return null;
+    return kind === IMPORT_ADDRESS ? EMPTY_STYLESHEET : buildTemplatePicture(address);
 }
 
 /**
@@ -137,23 +145,18 @@ export function getHeldPreviewRef(value, getExampleAddress) {
 }
 
 /**
- * Returns CSS the example view of a template held back, with only local addresses: each url()
- * and @import an example picture or a file of the document, else a placeholder picture or an empty
- * stylesheet; comments, escapes and image-set() lists, which could name addresses past these
- * patterns, are taken out, an @import of any other form is made unknown to CSS, and a url( left
- * open at the end counts as well.
+ * Returns CSS the example view of a template held back, with only local addresses: each url(),
+ * string of image-set() and @import an example picture or a file of the document, else a
+ * placeholder picture or an empty stylesheet. The CSS is read as css-references.js reads it:
+ * pieces with an escape that could spell an address are left out, a comment reads as a space,
+ * an @import of another form is left out and a url( left open at the end counts as well.
  * @param {string} css - the CSS as the filled text holds it.
  * @param {function(string): ?string} getExampleAddress - returns the blob: address of an example picture by name.
  * @returns {string} the CSS for the preview.
  */
 export function getHeldPreviewCss(css, getExampleAddress) {
-    return css.replace(CSS_COMMENT, '').replace(/\\/g, '').replace(/image-set\s*\(/gi, 'none(')
-        .replace(CSS_IMPORT_ANY, (whole, quote, address) => `@import "${getHeldPreviewRef(address, getExampleAddress) || EMPTY_STYLESHEET}"`)
-        .replace(/@import(?!\s*")/gi, '@-preview-import')
-        .replace(CSS_URL_OPEN, (whole, doubleQuoted, singleQuoted, bare) => {
-            const address = doubleQuoted ?? singleQuoted ?? bare ?? '';
-            return `url("${getHeldPreviewRef(address, getExampleAddress) || buildTemplatePicture(address)}")`;
-        });
+    return buildCssWithAddresses(css, (address, kind) => getHeldPreviewRef(address, getExampleAddress)
+        || (kind === IMPORT_ADDRESS ? EMPTY_STYLESHEET : buildTemplatePicture(address)));
 }
 
 /**

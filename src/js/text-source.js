@@ -10,8 +10,8 @@
 
 import { getDecodedRange } from './html-tokens.js?v=3';
 import { state } from './state.js?v=2';
-import { getExampleMap } from './preview-views.js?v=1';
-import { hasFillInRange } from './template-expansion.js?v=1';
+import { getExampleMap } from './preview-views.js?v=2';
+import { hasFillInRange } from './template-expansion.js?v=2';
 
 /** Elements whose text is not edited in place. */
 const NOT_EDITABLE = 'style, textarea, title, select, option, noscript, svg, math, iframe, object, template, [contenteditable="true"]';

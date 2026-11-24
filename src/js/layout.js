@@ -7,9 +7,9 @@
 
 import { openDialog } from './dialogs.js?v=5';
 import { state, ui, getElement, getElements, getNumberInRange } from './state.js?v=2';
-import { saveState } from './storage.js?v=6';
-import { moveCodeLayers } from './code-view.js?v=6';
-import { renderFilesTab } from './files-tab.js?v=6';
+import { saveState } from './storage.js?v=7';
+import { moveCodeLayers } from './code-view.js?v=7';
+import { renderFilesTab } from './files-tab.js?v=7';
 
 /** The smallest and largest share of the width the code takes. */
 const MIN_SPLIT = 0.15;

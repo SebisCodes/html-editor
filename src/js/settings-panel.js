@@ -9,15 +9,15 @@
  */
 
 import { escapeHtml, findAttribute, getAttributeValue, getDecodedText } from './html-tokens.js?v=3';
-import { isRefTo, isOutsideRef } from './html.js?v=7';
+import { isRefTo, isOutsideRef } from './html.js?v=8';
 import { getExtension } from './assets.js?v=6';
 import { state, ui, NARROW_SCREEN, getElement, showToast } from './state.js?v=2';
-import { setCode, addTypingStep } from './history.js?v=6';
-import { getElementsByPlace } from './preview.js?v=6';
-import { findFileForRef } from './file-refs.js?v=4';
-import { showCodePosition } from './code-view.js?v=6';
-import { showPane } from './layout.js?v=6';
-import { createBlankPage } from './documents.js?v=6';
+import { setCode, addTypingStep } from './history.js?v=7';
+import { getElementsByPlace } from './preview.js?v=7';
+import { findFileForRef } from './file-refs.js?v=5';
+import { showCodePosition } from './code-view.js?v=7';
+import { showPane } from './layout.js?v=7';
+import { createBlankPage } from './documents.js?v=7';
 import { findFirstElement, findMetaElement, setAttributeInCode, addToHead, removeElementFromCode, setTitleInCode, setMetaInCode } from './head-edit.js?v=3';
 
 /** The languages offered for <html lang>: [code, label]. */

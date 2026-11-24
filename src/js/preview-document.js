@@ -9,7 +9,9 @@
  *   3. take out scripts, <base> and meta refresh, on… attributes and javascript:, vbscript:
  *      and data:text/html addresses;
  *   4. show a reference that holds a placeholder ({{…}} or <<…>>) as a placeholder picture, or
- *      take it out, so the preview loads nothing for it (CSS url() and @import: file-refs.js);
+ *      take it out, so the preview loads nothing for it (CSS url() and @import: file-refs.js;
+ *      an SVG attribute read as CSS with an escape that could spell an address, and an animation
+ *      value with a placeholder, are taken out);
  *   5. put the document's files in as blob: addresses (src, poster, data of object, href of
  *      stylesheets and SVG images, srcset, url() in style attributes and <style>); a missing
  *      file's attribute is removed;
@@ -24,11 +26,12 @@
  * The code keeps everything as it was written.
  */
 
-import { getPreviewRef, getPreviewCss, getHeldPreviewRef, getHeldPreviewCss } from './file-refs.js?v=4';
-import { hasTemplatePlaceholder, buildTemplatePicture, getTemplateTags } from './template-tags.js?v=1';
+import { getPreviewRef, getPreviewCss, getHeldPreviewRef, getHeldPreviewCss, DATA_ADDRESS } from './file-refs.js?v=5';
+import { hasTemplatePlaceholder, buildTemplatePicture, getTemplateTags } from './template-tags.js?v=2';
 import { createTemplateMarking, buildTemplateMarker, setMarkedTags } from './template-markers.js?v=1';
-import { HELD_PREFIX, HELD_CSS_ATTRIBUTE, REFERENCE_ATTRIBUTES, getTagPlaces as getTagTokenPlaces } from './html-examples.js?v=1';
+import { HELD_PREFIX, HELD_CSS_ATTRIBUTE, REFERENCE_ATTRIBUTES, getTagPlaces as getTagTokenPlaces } from './html-examples.js?v=2';
 import { findAttribute, getDecodedText } from './html-tokens.js?v=3';
+import { isEscapedCssValue } from './css-references.js?v=1';
 
 /** Attributes that hold an address that could run script. */
 const ADDRESS_ATTRIBUTE = /^(href|src|action|formaction|xlink:href|data)$/i;
@@ -42,6 +45,13 @@ const NO_TEXT_ELEMENTS = new Set(['table', 'thead', 'tbody', 'tfoot', 'tr', 'col
 const PLACEHOLDER_ATTRIBUTES = ['src', 'poster', 'data', 'href', 'xlink:href', 'background', 'action', 'formaction', 'ping', 'lowsrc', 'dynsrc', 'longdesc', 'cite', 'manifest', 'codebase', 'archive', 'profile', 'imagesrcset'];
 /** A CSS function that names an address, in an attribute other than style (SVG paints, filters, masks). */
 const CSS_ADDRESS = /url\s*\(/i;
+/** The namespace of SVG elements, whose attributes other than addresses can be read as CSS. */
+const SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
+/** SVG elements that change an attribute over time, and the attributes that hold the values they set. */
+const ANIMATION_ELEMENTS = new Set(['set', 'animate', 'animateColor', 'animateMotion', 'animateTransform']);
+const ANIMATION_VALUES = ['to', 'from', 'by', 'values'];
+/** SVG elements whose href the browser loads (feImage paints the picture it names). */
+const LOADED_HREF_ELEMENTS = ['link', 'image', 'use', 'feImage'];
 /** A file name of a srcset: a run of characters other than spaces and commas. */
 const SRCSET_CANDIDATE = /([^\s,][^\s,]*)/g;
 
@@ -57,7 +67,10 @@ export function createPreviewDocument(code, parsed, templateSyntax = null) {
     const marking = tags.length ? createTemplateMarking(code, tags) : null;
     const source = tags.length ? buildTemplatePreviewSource(code, parsed, tags, marking) : code;
     const previewDocument = readPreviewSource(getMarkedCode(source, parsed), null);
-    if (marking) setMarkedTags(previewDocument.documentElement, marking);
+    if (marking) {
+        setMarkedTags(previewDocument.documentElement, marking);
+        previewDocument.querySelectorAll('*').forEach(setPlaceholderCssValues);
+    }
     return previewDocument;
 }
 
@@ -100,6 +113,7 @@ function readPreviewSource(source, example) {
         removeActiveAttributes(element);
         if (example) disableChangedReferences(element, example);
         setPlaceholderAddresses(element);
+        setPlaceholderCssValues(element);
         setFileAddresses(element);
         if (example) setHeldAddresses(element, example.getExampleAddress);
     }
@@ -110,8 +124,8 @@ function readPreviewSource(source, example) {
  * Holds back the references of an element of the example view that are not the code's own: an
  * element the code does not hold at its data-hp holds back every reference; otherwise a reference
  * whose code attribute is missing, holds a placeholder or differs from it. CSS of a style element
- * that differs from the code gets only local addresses; another attribute with url() that differs
- * from the code is taken out.
+ * that differs from the code gets only local addresses; another attribute with url() or a CSS
+ * escape, or a value of an SVG animation, that differs from the code is taken out.
  * @param {Element} element - an element of the preview document.
  * @param {ExampleContext} example - the code to check against.
  * @returns {void}
@@ -122,7 +136,7 @@ function disableChangedReferences(element, example) {
         const name = attribute.name;
         if (name.startsWith(HELD_PREFIX) || isCodeValue(example.code, codeElement, name, attribute.value)) continue;
         if (REFERENCE_ATTRIBUTES.has(name)) { element.setAttribute(HELD_PREFIX + name, attribute.value); element.removeAttribute(name); }
-        else if (CSS_ADDRESS.test(attribute.value)) element.removeAttribute(name);
+        else if (CSS_ADDRESS.test(attribute.value) || isEscapedCssValue(attribute.value) || isAnimationValue(element, name)) element.removeAttribute(name);
     }
     if (element.localName === 'style' && !element.hasAttribute(HELD_CSS_ATTRIBUTE) && !isCodeContent(example.code, codeElement, element.textContent)) {
         element.textContent = getHeldPreviewCss(element.textContent, example.getExampleAddress);
@@ -281,15 +295,17 @@ function buildTagStandIn(tag, index, place, isMarkedElsewhere, marking) {
 /**
  * Shows a reference that holds a placeholder as a placeholder picture (pictures) or takes it
  * out (stylesheets, frames, media, objects, a frame's own page in srcdoc), so the preview requests
- * nothing for it.
+ * nothing for it; a link to a data address goes as well, since its stylesheet can name further
+ * addresses in an encoding of its own.
  * @param {Element} element - an element of the preview document.
  * @returns {void}
  */
 function setPlaceholderAddresses(element) {
+    if (element.localName === 'link' && DATA_ADDRESS.test(element.getAttribute('href') || '')) element.removeAttribute('href');
     for (const name of PLACEHOLDER_ATTRIBUTES) {
         const value = element.getAttribute(name);
         if (!value || !hasTemplatePlaceholder(value)) continue;
-        if (name === 'href' && !['link', 'image', 'use'].includes(element.localName)) continue;
+        if (name === 'href' && !LOADED_HREF_ELEMENTS.includes(element.localName)) continue;
         const showsPicture = PICTURE_ELEMENTS.has(element.localName) || name === 'poster';
         if (showsPicture) element.setAttribute(name, buildTemplatePicture(value));
         else if (element.localName === 'iframe') element.setAttribute(name, 'about:blank');
@@ -301,6 +317,34 @@ function setPlaceholderAddresses(element) {
         if (PICTURE_ELEMENTS.has(element.localName)) element.setAttribute('src', buildTemplatePicture(srcset));
     }
     if (element.hasAttribute('srcdoc') && hasTemplatePlaceholder(element.getAttribute('srcdoc'))) element.removeAttribute('srcdoc');
+}
+
+/**
+ * Holds the attributes of an SVG element that are read as CSS or set by an animation: a value
+ * with a CSS escape and a function or a string is taken out (css-references.js), a value that
+ * holds a placeholder shows its addresses as placeholder pictures, and a value of an animation
+ * that holds a placeholder is taken out, so no animation sets an address with one.
+ * @param {Element} element - an element of the preview document.
+ * @returns {void}
+ */
+function setPlaceholderCssValues(element) {
+    if (element.namespaceURI !== SVG_NAMESPACE) return;
+    for (const attribute of [...element.attributes]) {
+        const name = attribute.name, value = attribute.value;
+        if (REFERENCE_ATTRIBUTES.has(name) || name.startsWith(HELD_PREFIX)) continue;
+        if (isEscapedCssValue(value) || (isAnimationValue(element, name) && hasTemplatePlaceholder(value))) element.removeAttribute(name);
+        else if (CSS_ADDRESS.test(value) && hasTemplatePlaceholder(value)) element.setAttribute(name, getPreviewCss(value));
+    }
+}
+
+/**
+ * Tells whether an attribute holds a value an SVG animation sets (to, from, by, values).
+ * @param {Element} element - the element.
+ * @param {string} name - the attribute's name.
+ * @returns {boolean} true for a value of an animation element.
+ */
+function isAnimationValue(element, name) {
+    return element.namespaceURI === SVG_NAMESPACE && ANIMATION_ELEMENTS.has(element.localName) && ANIMATION_VALUES.includes(name);
 }
 
 /**

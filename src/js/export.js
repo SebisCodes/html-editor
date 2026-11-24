@@ -6,14 +6,14 @@
  * its own styles. The choice is remembered in this browser.
  */
 
-import { getRefPath } from './html.js?v=7';
+import { getRefPath } from './html.js?v=8';
 import { getDecodedText } from './html-tokens.js?v=3';
 import { getExtension, getDataUrlBytes, getDataUrlText } from './assets.js?v=6';
 import { state, showToast } from './state.js?v=2';
-import { renderPreview, PREVIEW_URL } from './preview.js?v=6';
-import { createViewDocument, getTemplateDocument, getViewTitle } from './preview-views.js?v=1';
-import { findFileForRef, getFileUses, getInlineCss } from './file-refs.js?v=4';
-import { stopTextEdit } from './text-edit.js?v=6';
+import { renderPreview, PREVIEW_URL } from './preview.js?v=7';
+import { createViewDocument, getTemplateDocument, getViewTitle } from './preview-views.js?v=2';
+import { findFileForRef, getFileUses, getInlineCss } from './file-refs.js?v=5';
+import { stopTextEdit } from './text-edit.js?v=7';
 
 /** Whether a PDF applies page breaks: "0" off, anything else on. */
 const PAGE_BREAKS_KEY = 'htmleditor.pagebreaks';

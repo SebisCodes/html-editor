@@ -38,7 +38,9 @@ embedding), `prompt-parts.js` (the parts of the AI prompt), `i18n.js`, `dialogs.
 placeholders (`?template=`) use the shared `template-tags.js`, and `template-examples.js`,
 `template-pictures.js`, `template-expansion.js` and `template-controls.js` for the page's examples,
 the example view with its map back to the code, the view switch and the "Placeholders" box;
-`preview-views.js` chooses the view.
+`preview-views.js` chooses the view. `css-references.js` (shared with the SVG editor) reads the
+addresses of CSS as the browser reads them and holds CSS with escapes that could spell one;
+`file-refs.js` and `preview-document.js` use it.
 
 ## Languages
 
