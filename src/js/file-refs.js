@@ -9,7 +9,7 @@ import { getRefPath, isOutsideRef, isRefTo } from './html.js?v=8';
 import { getMediaType, getDataUrlBytes, getDataUrlText } from './assets.js?v=6';
 import { state } from './state.js?v=2';
 import { hasTemplatePlaceholder, buildTemplatePicture } from './template-tags.js?v=2';
-import { buildEscapeSafeCss, buildCssWithAddresses, IMPORT_ADDRESS } from './css-references.js?v=1';
+import { buildEscapeSafeCss, buildCssWithAddresses, IMPORT_ADDRESS } from './css-references.js?v=2';
 
 /** An empty stylesheet, in the place of an imported one whose address holds a placeholder. */
 const EMPTY_STYLESHEET = 'data:text/css,';

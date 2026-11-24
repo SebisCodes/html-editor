@@ -15,11 +15,11 @@
  */
 
 import { state, ui, showToast, getNumberInRange } from './state.js?v=2';
-import { setCode, addTypingStep } from './history.js?v=7';
-import { renderPreview, showCodeElementNow, isPreviewScheduled } from './preview.js?v=7';
-import { showCodePosition } from './code-view.js?v=7';
-import { findPictureCode, getDropPlace } from './picture-drop.js?v=7';
-import { getMovedCode } from './picture-code.js?v=7';
+import { setCode, addTypingStep } from './history.js?v=8';
+import { renderPreview, showCodeElementNow, isPreviewScheduled } from './preview.js?v=8';
+import { showCodePosition } from './code-view.js?v=8';
+import { findPictureCode, getDropPlace } from './picture-drop.js?v=8';
+import { getMovedCode } from './picture-code.js?v=8';
 
 /** Pixels a mouse moves before a press becomes a move. */
 const DRAG_MIN = 4;

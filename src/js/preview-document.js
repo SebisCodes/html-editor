@@ -26,12 +26,12 @@
  * The code keeps everything as it was written.
  */
 
-import { getPreviewRef, getPreviewCss, getHeldPreviewRef, getHeldPreviewCss, DATA_ADDRESS } from './file-refs.js?v=5';
+import { getPreviewRef, getPreviewCss, getHeldPreviewRef, getHeldPreviewCss, DATA_ADDRESS } from './file-refs.js?v=6';
 import { hasTemplatePlaceholder, buildTemplatePicture, getTemplateTags } from './template-tags.js?v=2';
 import { createTemplateMarking, buildTemplateMarker, setMarkedTags } from './template-markers.js?v=1';
 import { HELD_PREFIX, HELD_CSS_ATTRIBUTE, REFERENCE_ATTRIBUTES, getTagPlaces as getTagTokenPlaces } from './html-examples.js?v=2';
 import { findAttribute, getDecodedText } from './html-tokens.js?v=3';
-import { isEscapedCssValue } from './css-references.js?v=1';
+import { isEscapedCssValue } from './css-references.js?v=2';
 
 /** Attributes that hold an address that could run script. */
 const ADDRESS_ATTRIBUTE = /^(href|src|action|formaction|xlink:href|data)$/i;

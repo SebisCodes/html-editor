@@ -15,11 +15,11 @@ import { store } from './files.js?v=10';
 import { assets } from './assets.js?v=6';
 import { VIEWER } from './sync.js?v=25';
 import { state, ui, showToast, getErrorCount } from './state.js?v=2';
-import { setCode, addTypingStep } from './history.js?v=7';
-import { renderPreview } from './preview.js?v=7';
-import { stopTextEdit } from './text-edit.js?v=7';
-import { openDocument, openNewDocument, createBlankPage } from './documents.js?v=7';
-import { renderInsertPanel } from './insert-panel.js?v=7';
+import { setCode, addTypingStep } from './history.js?v=8';
+import { renderPreview } from './preview.js?v=8';
+import { stopTextEdit } from './text-edit.js?v=8';
+import { openDocument, openNewDocument, createBlankPage } from './documents.js?v=8';
+import { renderInsertPanel } from './insert-panel.js?v=8';
 
 const AI_DOCUMENT_NAME = 'AI document';
 const INDENT = '  ';

@@ -12,9 +12,9 @@
 import { parse } from './html.js?v=8';
 import { VOID } from './html-tokens.js?v=3';
 import { state, ui } from './state.js?v=2';
-import { undo, redo } from './history.js?v=7';
-import { showCodeElementNow } from './preview.js?v=7';
-import { setCodeRange, addTagAroundSelection } from './code-insert.js?v=7';
+import { undo, redo } from './history.js?v=8';
+import { showCodeElementNow } from './preview.js?v=8';
+import { setCodeRange, addTagAroundSelection } from './code-insert.js?v=8';
 
 const INDENT = '  ';
 /** Characters that go around a selection, with their closing partner. */
