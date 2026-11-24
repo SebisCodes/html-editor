@@ -6,9 +6,9 @@
 
 import { escapeHtml } from './html-tokens.js?v=3';
 import { state, ui, NARROW_SCREEN } from './state.js?v=2';
-import { renderPreview, isPreviewScheduled } from './preview.js?v=5';
-import { showCodePosition } from './code-view.js?v=5';
-import { showPane } from './layout.js?v=5';
+import { renderPreview, isPreviewScheduled } from './preview.js?v=6';
+import { showCodePosition } from './code-view.js?v=6';
+import { showPane } from './layout.js?v=6';
 
 /**
  * Draws the outline of the headings, indented by their level below the highest one.

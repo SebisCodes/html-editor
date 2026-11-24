@@ -23,10 +23,10 @@
  *   6. offer the test hook window.htmlEditor.
  */
 
-import { createI18n } from './i18n.js?v=26';
+import { createI18n } from './i18n.js?v=27';
 import { createWrap } from './wrap.js?v=5';
 import { createAiStatus } from './aistatus.js?v=9';
-import { createSync, VIEWER } from './sync.js?v=24';
+import { createSync, VIEWER } from './sync.js?v=25';
 import './export-menu.js?v=6';
 import { startConvert } from './convert-to.js?v=14';
 import { START } from './samples.js?v=3';
@@ -36,29 +36,29 @@ import { createAi } from './ai.js?v=10';
 import { createMcp } from './mcp.js?v=4';
 import { formatHtml } from './html-tidy.js?v=4';
 import { state, ui, areas, PREFIX, getElement, showToast } from './state.js?v=2';
-import { getSettings, startStorageSync } from './storage.js?v=5';
-import { renderCode, moveCodeLayers, showCodePosition, startCodeView } from './code-view.js?v=5';
-import { setCode, addHistoryStep, undo, redo } from './history.js?v=5';
-import { renderPreview, startPreviewFrame, startPreviewTimer } from './preview.js?v=5';
-import { startPictureMoving } from './picture-move.js?v=5';
-import { startProblems } from './problems.js?v=5';
-import { startTyping } from './typing.js?v=5';
-import { renderInsertPanel, startInsertPanel } from './insert-panel.js?v=5';
-import { startFilesTab } from './files-tab.js?v=5';
-import { startSettingsPanel } from './settings-panel.js?v=5';
-import { startOutline } from './outline.js?v=5';
-import { showFileName, openDocument, createDocumentsDialog, startDocumentButtons } from './documents.js?v=5';
-import { showFilePicker, startFileImport } from './file-import.js?v=5';
-import { startKeyboard } from './keyboard.js?v=5';
-import { showSplit, showPreviewWidth, startPreviewWidth, startLayout, startDialogs } from './layout.js?v=5';
-import { startExportDialog } from './export-dialog.js?v=5';
-import { runPrint, getPlainText } from './export.js?v=5';
-import { startTemplateControls } from './template-panel.js?v=2';
+import { getSettings, startStorageSync } from './storage.js?v=6';
+import { renderCode, moveCodeLayers, showCodePosition, startCodeView } from './code-view.js?v=6';
+import { setCode, addHistoryStep, undo, redo } from './history.js?v=6';
+import { renderPreview, startPreviewFrame } from './preview.js?v=6';
+import { startPictureMoving } from './picture-move.js?v=6';
+import { startProblems } from './problems.js?v=6';
+import { startTyping } from './typing.js?v=6';
+import { renderInsertPanel, startInsertPanel } from './insert-panel.js?v=6';
+import { startFilesTab } from './files-tab.js?v=6';
+import { startSettingsPanel } from './settings-panel.js?v=6';
+import { startOutline } from './outline.js?v=6';
+import { showFileName, openDocument, createDocumentsDialog, startDocumentButtons } from './documents.js?v=6';
+import { showFilePicker, startFileImport } from './file-import.js?v=6';
+import { startKeyboard } from './keyboard.js?v=6';
+import { showSplit, showPreviewWidth, startPreviewWidth, startLayout, startDialogs } from './layout.js?v=6';
+import { startExportDialog } from './export-dialog.js?v=6';
+import { runPrint, getPlainText } from './export.js?v=6';
+import { startTemplateControls, updateTemplateView } from './template-panel.js?v=3';
 import { createTemplateExamples } from './template-examples.js?v=1';
-import { receiveDocument, importExternalDocument } from './incoming.js?v=5';
+import { receiveDocument, importExternalDocument } from './incoming.js?v=6';
 import {
     getPromptState, getProblemList, getAgentElements, getFileList, openFileByName, createFile, addHtml, updateText, showLine,
-} from './agent-api.js?v=5';
+} from './agent-api.js?v=6';
 
 /** The widths the preview can have. */
 const PREVIEW_WIDTHS = /^(fill|768|390)$/;
@@ -272,7 +272,7 @@ function createSyncEditor() {
         setHookFor: (id, hook) => { try { store.setEntryFields(id, { hook }); } catch (e) { showToast('The browser storage is full'); } },
         onAi: () => areas.ai?.updateRemote(),
         parseTemplate: message => createTemplateExamples(message),
-        onTemplate: () => startPreviewTimer(),
+        onTemplate: () => updateTemplateView(),
     };
 }
 

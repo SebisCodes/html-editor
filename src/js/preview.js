@@ -18,13 +18,13 @@ import { state, ui, getElements } from './state.js?v=2';
 import { getMissingRefs } from './file-refs.js?v=4';
 import { checkTemplateSections, convertTemplateTagsToBraces } from './template-tags.js?v=1';
 import { TEMPLATE_SYNTAX, createViewDocument } from './preview-views.js?v=1';
-import { renderTemplateControls } from './template-panel.js?v=2';
-import { connectPreviewDocument } from './preview-events.js?v=5';
-import { renderProblems } from './problems.js?v=5';
-import { renderCode } from './code-view.js?v=5';
-import { renderFilesTab } from './files-tab.js?v=5';
-import { renderOutline } from './outline.js?v=5';
-import { renderSettingsPanel } from './settings-panel.js?v=5';
+import { renderTemplateControls } from './template-panel.js?v=3';
+import { connectPreviewDocument } from './preview-events.js?v=6';
+import { renderProblems } from './problems.js?v=6';
+import { renderCode } from './code-view.js?v=6';
+import { renderFilesTab } from './files-tab.js?v=6';
+import { renderOutline } from './outline.js?v=6';
+import { renderSettingsPanel } from './settings-panel.js?v=6';
 
 /** The frame's page, from the script's own place, so it also holds on the language pages (/de/ …). */
 export const PREVIEW_URL = new URL('../preview.html?v=1', import.meta.url).href;

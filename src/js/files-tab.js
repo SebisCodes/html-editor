@@ -11,10 +11,10 @@ import { saveFile } from './util.js?v=3';
 import { openConfirmation } from './dialogs.js?v=5';
 import { state, ui, NARROW_SCREEN } from './state.js?v=2';
 import { getMissingRefs, getFileUses } from './file-refs.js?v=4';
-import { addSnippet } from './code-insert.js?v=5';
-import { showCodePosition } from './code-view.js?v=5';
-import { showPane } from './layout.js?v=5';
-import { addFile, addFileReference, renameFile, removeFile } from './document-files.js?v=5';
+import { addSnippet } from './code-insert.js?v=6';
+import { showCodePosition } from './code-view.js?v=6';
+import { showPane } from './layout.js?v=6';
+import { addFile, addFileReference, renameFile, removeFile } from './document-files.js?v=6';
 
 /** The files a document can keep, for the file picker. */
 const ACCEPTED_FILES = 'image/*,.css,.js,.mjs,.json,.txt,.csv,.xml,.pdf,.woff2,.woff,.ttf,.otf,.mp4,.webm,.mp3,.wav,.ogg,.m4a,.vtt,.ico';
